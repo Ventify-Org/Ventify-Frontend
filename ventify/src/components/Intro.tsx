@@ -15,14 +15,14 @@ const Intro = () => {
             </p>
           </div>
           <div className="w-[1/3] gap-8 items-center p-12 flex flex-col h-full justify-center">
-            <button className="bg-blue-700 px-2 py-2 border-0 rounded-md">
+            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
               Sign up as a VC firm
             </button>
-            <button className="bg-blue-700 px-2 py-2 border-0 rounded-md">
-              Sign up as a VC firm
+            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
+              Sign up as a Private Investor
             </button>
-            <button className="bg-blue-700 px-2 py-2 border-0 rounded-md">
-              Sign up as a VC firm
+            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
+              Sign up as a Business
             </button>
           </div>
         </div>

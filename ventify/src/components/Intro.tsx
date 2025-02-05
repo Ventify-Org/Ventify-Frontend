@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 const Intro = () => {
+  const navigate = useNavigate();
   return (
     <section className="bg-black/80">
       <div className="relative h-[600px] w-full bg-[url('./assets/office-room.png')] bg-cover bg-center bg-no-repeat flex justify-center items-center">
@@ -15,13 +18,22 @@ const Intro = () => {
             </p>
           </div>
           <div className="w-[1/3] gap-8 items-center p-12 flex flex-col h-full justify-center">
-            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
+            <button
+              className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
+              onClick={() => navigate("/signin/vc-firm")}
+            >
               Sign up as a VC firm
             </button>
-            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
+            <button
+              className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
+              onClick={() => navigate("/signin/private-investor")}
+            >
               Sign up as a Private Investor
             </button>
-            <button className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md">
+            <button
+              className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
+              onClick={() => navigate("/signin/business")}
+            >
               Sign up as a Business
             </button>
           </div>

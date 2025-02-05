@@ -1,20 +1,19 @@
-import About from "./components/About";
-import Contact from "./components/Contact";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Intro from "./components/Intro";
-import Services from "./components/Services";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import Signin from "./components/Signin";
+import Signup from "./components/SignUp";
+import ForgotPassword from "./components/ForgotPassword";
 
 const App = () => {
   return (
-    <div>
-      <Header />
-      <Intro />
-      <About />
-      <Services />
-      <Contact />
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signin/:type" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+      </Routes>
+    </Router>
   );
 };
 

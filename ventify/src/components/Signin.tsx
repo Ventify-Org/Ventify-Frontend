@@ -1,14 +1,20 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { FaLinkedin, FaFacebook, FaTwitter } from "react-icons/fa";
 
 const Signin = () => {
+  const navigate = useNavigate();
   const { type } = useParams();
 
   const titles = {
     "vc-firm": "VC Firm",
     "private-investor": "Private Investor",
     business: "Business",
+  };
+
+  const submitForm = () => {
+    console.log("Sign in successful");
+    navigate("/dashboard");
   };
 
   return (
@@ -46,7 +52,7 @@ const Signin = () => {
           <div className="w-1/2 flex flex-col items-center">
             <p className="text-center text-4xl my-8">Sign In</p>
             <div className="w-[70%] mx-auto text-lg">
-              <form>
+              <form onSubmit={submitForm}>
                 <div className="mb-4">
                   <label
                     htmlFor="email"

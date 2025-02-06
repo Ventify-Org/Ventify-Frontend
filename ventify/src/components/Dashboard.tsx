@@ -1,9 +1,10 @@
 import { useState } from "react";
+import Raisings from "./Raisings";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
-  // Explicitly typing the sections object
   const sections: Record<string, JSX.Element> = {
     Dashboard: (
       <div>
@@ -33,9 +34,10 @@ const Dashboard = () => {
       </div>
     ),
     Raisings: (
-      <div>
-        <p>Random shii</p>
-      </div>
+      <Raisings
+        selectedCompany={selectedCompany}
+        setSelectedCompany={setSelectedCompany}
+      />
     ),
     Investments: (
       <div>
@@ -58,39 +60,30 @@ const Dashboard = () => {
   };
 
   return (
-    <section>
-      <nav className="flex justify-center items-center">
-        <img src="/logo.png" />
-      </nav>
-      <div className="flex gap-4">
-        {/* Sidebar */}
-        <div className="w-[15%] bg-[#00378B] text-white flex flex-col items-center py-4">
-          <div className="w-20 h-20 rounded-full bg-green-400"></div>
-          <p>James Gordon</p>
-          <p>Microsoft</p>
+    <section className="flex gap-4">
+      {/* Sidebar */}
+      <div className="w-[15%] bg-[#00378B] text-white flex flex-col items-center py-4">
+        <div className="w-20 h-20 rounded-full bg-green-400"></div>
+        <p>James Gordon</p>
+        <p>Microsoft</p>
 
-          <nav className="mt-4 w-full flex flex-col gap-2">
-            {Object.keys(sections).map((section) => (
-              <button
-                key={section}
-                className={`px-5 py-2 rounded w-full text-left ${
-                  activeSection === section
-                    ? "bg-yellow-400 text-[#00378B]"
-                    : ""
-                }`}
-                onClick={() => setActiveSection(section)}
-              >
-                {section}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Main Content */}
-        <div className="w-[85%] flex flex-col p-8">
-          {sections[activeSection]}
-        </div>
+        <nav className="mt-4 w-full flex flex-col gap-2">
+          {Object.keys(sections).map((section) => (
+            <button
+              key={section}
+              className={`px-5 py-2 w-full text-left ${
+                activeSection === section ? "bg-yellow-400 text-[#00378B]" : ""
+              }`}
+              onClick={() => setActiveSection(section)}
+            >
+              {section}
+            </button>
+          ))}
+        </nav>
       </div>
+
+      {/* Main Content */}
+      <div className="w-3/4 flex flex-col p-8">{sections[activeSection]}</div>
     </section>
   );
 };

@@ -29,7 +29,7 @@ const Raisings = ({
   ) : (
     <div>
       <h1 className="text-3xl font-bold">Raisings</h1>
-      <div className="flex flex-col items-center mt-12">
+      <div className="flex flex-col items-center">
         {["Company A", "Company B", "Company C", "Company D"].map((company) => (
           <div
             key={company}

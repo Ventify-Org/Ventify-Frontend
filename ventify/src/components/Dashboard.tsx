@@ -1,17 +1,13 @@
 import { useState } from "react";
 import Raisings from "./Raisings";
+import DashboardMenu from "./Dashboard-Menu";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
   const sections: Record<string, JSX.Element> = {
-    Dashboard: (
-      <div>
-        <h1 className="text-3xl font-bold">Welcome to your Dashboard</h1>
-        <p>Here you can see an overview of your account.</p>
-      </div>
-    ),
+    Dashboard: <DashboardMenu />,
     Applications: (
       <div>
         <h1 className="text-3xl font-bold">Your Applications</h1>

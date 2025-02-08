@@ -26,7 +26,7 @@ const Services = () => {
         </div>
 
         <div className="w-1/3 flex flex-col items-center justify-center">
-          <img src="/src/assets/chart.png" alt="Chart" />
+          <img src="/chart.png" alt="Chart" />
         </div>
       </div>
     </section>

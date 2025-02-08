@@ -2,21 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { FaLinkedin, FaFacebook, FaTwitter } from "react-icons/fa";
 
-const Signin = () => {
+const SigninVC = () => {
   const navigate = useNavigate();
-  //const { type } = useParams();
-
-  const pathSegments = window.location.pathname.split("/");
-  const type = pathSegments[pathSegments.length - 1];
-
-  const titles = {
-    "vc-firm": "VC Firm",
-    "private-investor": "Private Investor",
-    business: "Business",
-  };
 
   const submitForm = () => {
-    navigate("/homepage", { replace: true });
+    navigate("/homepage");
   };
 
   return (
@@ -30,7 +20,7 @@ const Signin = () => {
             <div className="flex flex-col justify-center items-center pt-15">
               <p className="text-4xl font-bold">SIGN IN AS A</p>
               <p className="text-4xl font-bold">
-                {titles[type as keyof typeof titles] || "Sign up"}
+                 VC Firm
               </p>
 
               <p className="text-lg my-6 text-center">
@@ -113,4 +103,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SigninVC;

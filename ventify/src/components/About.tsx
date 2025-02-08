@@ -3,7 +3,7 @@ const About = () => {
     <section className="p-15">
       <div className="flex flex-row gap-12 mx-8 items-center justify-center">
         <div className="w-1/3 flex flex-col items-center justify-center">
-          <img src="/src/assets/group63.png" />
+          <img src="/group63.png" />
         </div>
 
         <div className="w-2/3">

@@ -13,7 +13,7 @@ const Signin = () => {
   };
 
   const submitForm = () => {
-    console.log("Sign in successful");
+    //console.log("Sign in successful");
     navigate("/dashboard");
   };
 

@@ -14,7 +14,7 @@ const Signin = () => {
 
   const submitForm = () => {
     //console.log("Sign in successful");
-    navigate("/dashboard");
+    navigate("/homepage");
   };
 
   return (

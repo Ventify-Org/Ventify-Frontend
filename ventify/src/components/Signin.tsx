@@ -1,10 +1,13 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { FaLinkedin, FaFacebook, FaTwitter } from "react-icons/fa";
 
 const Signin = () => {
   const navigate = useNavigate();
-  const { type } = useParams();
+  //const { type } = useParams();
+
+  const pathSegments = window.location.pathname.split("/");
+  const type = pathSegments[pathSegments.length - 1];
 
   const titles = {
     "vc-firm": "VC Firm",

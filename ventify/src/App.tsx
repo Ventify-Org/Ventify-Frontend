@@ -3,7 +3,7 @@ import Home from "./components/Home";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import ForgotPassword from "./components/ForgotPassword";
-import Dashboard from "./components/Dashboard";
+import Homepage from "./components/Homepage";
 
 const App = () => {
   return (
@@ -13,7 +13,7 @@ const App = () => {
         <Route path="/signin/:type" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/dashboard/" element={<Dashboard />} />
+        <Route path="/homepage" element={<Homepage />} />
       </Routes>
     </Router>
   );

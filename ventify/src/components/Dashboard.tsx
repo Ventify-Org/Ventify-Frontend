@@ -3,6 +3,7 @@ import DashboardMenu from "./Dashboard-Menu";
 import Messages from "./Messages";
 import Raisings from "./Raisings";
 import Applications from "./Applications";
+import VcChat from "./VC-Chat";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -11,11 +12,7 @@ const Dashboard = () => {
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
     Applications: <Applications />,
-    "VC-Chat": (
-      <div>
-        <p>Chat shii</p>
-      </div>
-    ),
+    "VC-Chat": <VcChat />,
     Messages: <Messages />,
     Raisings: (
       <Raisings

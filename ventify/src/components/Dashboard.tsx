@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardMenu from "./Dashboard-Menu";
 import Messages from "./Messages";
 import Raisings from "./Raisings";
+import Applications from "./Applications";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -9,16 +10,7 @@ const Dashboard = () => {
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
-    Applications: (
-      <div>
-        <h1 className="text-3xl font-bold">Your Applications</h1>
-        <ul className="list-disc pl-5">
-          <li>Application 1</li>
-          <li>Application 2</li>
-          <li>Application 3</li>
-        </ul>
-      </div>
-    ),
+    Applications: <Applications />,
     "VC-Chat": (
       <div>
         <p>Chat shii</p>

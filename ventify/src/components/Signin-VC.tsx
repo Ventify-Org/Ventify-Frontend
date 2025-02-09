@@ -6,7 +6,7 @@ const SigninVC = () => {
   const navigate = useNavigate();
 
   const submitForm = () => {
-    navigate("/homepage");
+    navigate("/main");
   };
 
   return (

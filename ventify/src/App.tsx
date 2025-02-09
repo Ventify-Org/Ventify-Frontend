@@ -6,6 +6,7 @@ import Homepage from "./components/Homepage";
 import SigninVC from "./components/Signin-VC";
 import SigninInvestor from "./components/Signin-Investor";
 import SigninBusiness from "./components/Signin-Business";
+import Main from "./components/Main"
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/homepage" element={<Homepage />} />
+        <Route path="/main" element={<Main />} />
       </Routes>
     </Router>
   );

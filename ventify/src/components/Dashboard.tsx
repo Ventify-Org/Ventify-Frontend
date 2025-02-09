@@ -3,7 +3,7 @@ import DashboardMenu from "./Dashboard-Menu";
 import Messages from "./Messages";
 import Raisings from "./Raisings";
 
-const Homepage = () => {
+const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
@@ -92,4 +92,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default Dashboard;

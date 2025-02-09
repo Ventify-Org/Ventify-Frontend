@@ -5,7 +5,8 @@ import { FaLinkedin, FaFacebook, FaTwitter } from "react-icons/fa";
 const SigninVC = () => {
   const navigate = useNavigate();
 
-  const submitForm = () => {
+  const submitForm = (e: React.FormEvent) => {
+    e.preventDefault();
     navigate("/main");
   };
 
@@ -19,9 +20,7 @@ const SigninVC = () => {
           <div className="bg-[#00378B] flex flex-col justify-center items-center text-white w-1/2 min-h-full px-16">
             <div className="flex flex-col justify-center items-center pt-15">
               <p className="text-4xl font-bold">SIGN IN AS A</p>
-              <p className="text-4xl font-bold">
-                 VC Firm
-              </p>
+              <p className="text-4xl font-bold">VC Firm</p>
 
               <p className="text-lg my-6 text-center">
                 A simple dummy text of the printing and typesetting industry.

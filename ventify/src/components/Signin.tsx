@@ -15,8 +15,14 @@ const Signin = () => {
 
   const submitForm = (e: FormEvent) => {
     e.preventDefault();
-    //console.log("Sign in successful");
-    navigate("/dashboard");
+
+    if (type === "vc-firm") {
+      navigate("/dashboard/vc-firm");
+    } else if (type === "private-investor") {
+      navigate("/dashboard/private-investor");
+    } else {
+      navigate("/dashboard/business");
+    }
   };
 
   return (

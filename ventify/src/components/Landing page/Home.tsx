@@ -1,7 +1,7 @@
 import About from "./About";
 import Contact from "./Contact";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header from "../Header";
 import Intro from "./Intro";
 import Services from "./Services";
 

@@ -1,38 +1,14 @@
 import { useState } from "react";
-import DashboardMenu from "./Dashboard-Menu";
+import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
-import Raisings from "./Raisings";
-import Applications from "./Applications";
-import VcChat from "./VC-Chat";
 
-const Dashboard = () => {
+const DashboardInvestor = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
-    Applications: <Applications />,
-    "VC-Chat": <VcChat />,
     Messages: <Messages />,
-    Raisings: (
-      <Raisings
-        selectedCompany={selectedCompany}
-        setSelectedCompany={setSelectedCompany}
-      />
-    ),
-    Investments: (
-      <div>
-        <h1 className="text-3xl font-bold">Portfolio Overview</h1>
-        <p>View and manage your portfolio here.</p>
-      </div>
-    ),
-    "Investor T. No": (
-      <div>
-        <h1 className="text-3xl font-bold">Investor Insights</h1>
-        <p>Track your investments and market trends.</p>
-      </div>
-    ),
-    "Portfolio T. No": (
+    "All Investments": (
       <div>
         <h1 className="text-3xl font-bold">Investor Insights</h1>
         <p>Track your investments and market trends.</p>
@@ -49,7 +25,7 @@ const Dashboard = () => {
 
         <div className="flex gap-4 flex-grow min-h-screen">
           {/* Sidebar */}
-          <div className="w-[15%] bg-[#00378B] text-white flex flex-col items-center py-4 min-h-screen">
+          <div className="w-[15%] bg-[#4D4D4D] text-white flex flex-col items-center py-4 min-h-screen">
             <div className="w-20 h-20 rounded-full bg-green-400"></div>
             <p>James Gordon</p>
             <p>Microsoft</p>
@@ -81,4 +57,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardInvestor;

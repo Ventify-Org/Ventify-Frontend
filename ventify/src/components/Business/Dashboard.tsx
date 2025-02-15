@@ -1,6 +1,8 @@
 import { useState } from "react";
 import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
+import AllRaised from "./AllRaised";
+import Upload from "./Upload";
 
 const DashboardBusiness = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -8,18 +10,8 @@ const DashboardBusiness = () => {
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
     Messages: <Messages />,
-    "All Raised": (
-      <div>
-        <h1 className="text-3xl font-bold">All Raised</h1>
-        <p>Total capital or revenue raised goes here.</p>
-      </div>
-    ),
-    Upload: (
-      <div>
-        <h1 className="text-3xl font-bold">Uploads</h1>
-        <p>Upload documents here</p>
-      </div>
-    ),
+    "All Raised": <AllRaised />,
+    Upload: <Upload />,
   };
 
   return (

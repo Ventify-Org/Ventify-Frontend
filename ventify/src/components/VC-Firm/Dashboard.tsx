@@ -4,6 +4,8 @@ import Messages from "./Messages";
 import Raisings from "./Raisings";
 import Applications from "./Applications";
 import VcChat from "./VC-Chat";
+import InvestorT from "./Investor-T";
+import Investments from "./Investments"
 
 const DashboardFirm = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -21,23 +23,10 @@ const DashboardFirm = () => {
       />
     ),
     Investments: (
-      <div>
-        <h1 className="text-3xl font-bold">Portfolio Overview</h1>
-        <p>View and manage your portfolio here.</p>
-      </div>
+      <Investments />
     ),
-    "Investor T. No": (
-      <div>
-        <h1 className="text-3xl font-bold">Investor Insights</h1>
-        <p>Track your investments and market trends.</p>
-      </div>
-    ),
-    "Portfolio T. No": (
-      <div>
-        <h1 className="text-3xl font-bold">Investor Insights</h1>
-        <p>Track your investments and market trends.</p>
-      </div>
-    ),
+    "Investor T. No": <InvestorT />,
+    "Portfolio T. No": <InvestorT />,
   };
 
   return (

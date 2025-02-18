@@ -12,7 +12,7 @@ const Header = () => {
         <img src="/logo.png" alt="logo" />
 
         <div className="hidden md:flex items-center space-x-8">
-          <nav className="flex space-x-6">
+          <nav className="flex space-x-18">
             {["Home", "About us", "Services", "Contact us"].map((item) => (
               <a
                 key={item}

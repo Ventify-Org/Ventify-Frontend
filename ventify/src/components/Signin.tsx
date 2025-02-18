@@ -8,9 +8,9 @@ const Signin = () => {
   const { type } = useParams();
 
   const titles = {
-    "vc-firm": "VC Firm",
-    "private-investor": "Private Investor",
-    business: "Business",
+    "vc-firm": "VC FIRM",
+    "private-investor": "PRIVATE INVESTOR",
+    business: "BUSINESS",
   };
 
   const submitForm = (e: FormEvent) => {
@@ -28,9 +28,7 @@ const Signin = () => {
   return (
     <>
       <Header />
-      {/* Full-page layout with flexbox */}
       <div className="flex flex-col h-screen">
-        {/* Main content section */}
         <section className="flex flex-grow justify-center items-center pt-20">
           <div className="bg-[#00378B] flex flex-col justify-center items-center text-white w-1/2 min-h-full px-16">
             <div className="flex flex-col justify-center items-center pt-15">
@@ -51,9 +49,12 @@ const Signin = () => {
 
             <p className="mt-auto pb-10">
               Don't have an account?{" "}
-              <Link className="text-yellow-500" to="/signup">
+              <a
+                className="text-yellow-500 hover:underline"
+                href={`/signup/${type}`}
+              >
                 Sign up
-              </Link>
+              </a>
             </p>
           </div>
 

@@ -1,11 +1,17 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { FaLinkedin, FaFacebook, FaTwitter } from "react-icons/fa";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
 const Signin = () => {
   const navigate = useNavigate();
   const { type } = useParams();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const titles = {
     "vc-firm": "VC FIRM",
@@ -13,15 +19,48 @@ const Signin = () => {
     business: "BUSINESS",
   };
 
-  const submitForm = (e: FormEvent) => {
-    e.preventDefault();
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    if (type === "vc-firm") {
-      navigate("/dashboard/vc-firm");
-    } else if (type === "private-investor") {
-      navigate("/dashboard/private-investor");
-    } else {
-      navigate("/dashboard/business");
+  const submitForm = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const url = "https://ventify-backend.onrender.com/api/auth/login";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        // Handle errors from backend
+        const errorMessage =
+          responseData.message || "Login failed. Please try again.";
+        alert(errorMessage);
+        return;
+      }
+
+      // Redirect to dashboard based on account type
+      if (type === "vc-firm") {
+        navigate("/dashboard/vc-firm/admin");
+      } else if (type === "private-investor") {
+        navigate("/dashboard/private-investor");
+      } else {
+        navigate("/dashboard/business");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -34,16 +73,11 @@ const Signin = () => {
             <div className="flex flex-col justify-center items-center pt-15">
               <p className="text-4xl font-bold">SIGN IN AS A</p>
               <p className="text-4xl font-bold">
-                {titles[type as keyof typeof titles] || "Sign up"}
+                {titles[type as keyof typeof titles] || "Sign In"}
               </p>
 
               <p className="text-lg my-6 text-center">
-                A simple dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only five centuries, but also the leap into electronic
-                typesetting.
+                Welcome back! Please sign in to continue managing your account.
               </p>
             </div>
 
@@ -72,6 +106,9 @@ const Signin = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="eg. hello@gmail.com"
                     required
@@ -87,6 +124,9 @@ const Signin = () => {
                   <input
                     type="password"
                     id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     required
                   />
@@ -95,8 +135,9 @@ const Signin = () => {
                   <button
                     type="submit"
                     className="bg-yellow-400 text-black rounded-md py-2 px-4 w-full hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
+                    disabled={isLoading}
                   >
-                    Sign in
+                    {isLoading ? "Signing In..." : "Sign in"}
                   </button>
                 </div>
               </form>
@@ -116,6 +157,12 @@ const Signin = () => {
           <FaTwitter size={20} />
         </footer>
       </div>
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+        </div>
+      )}
     </>
   );
 };

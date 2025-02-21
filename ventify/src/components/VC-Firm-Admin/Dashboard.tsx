@@ -5,9 +5,9 @@ import Raisings from "./Raisings";
 import Applications from "./Applications";
 import VcChat from "./VC-Chat";
 import InvestorT from "./Investor-T";
-import Investments from "./Investments"
+import Investments from "./Investments";
 
-const DashboardFirm = () => {
+const DashboardFirmAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
@@ -22,9 +22,7 @@ const DashboardFirm = () => {
         setSelectedCompany={setSelectedCompany}
       />
     ),
-    Investments: (
-      <Investments />
-    ),
+    Investments: <Investments />,
     "Investor T. No": <InvestorT />,
     "Portfolio T. No": <InvestorT />,
   };
@@ -70,4 +68,4 @@ const DashboardFirm = () => {
   );
 };
 
-export default DashboardFirm;
+export default DashboardFirmAdmin;

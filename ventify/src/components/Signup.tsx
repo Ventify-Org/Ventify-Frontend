@@ -1,16 +1,55 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import vcFirmImage from "/vc-firm.png";
 import privateInvestorImage from "/private-investor.png";
 import businessImage from "/business.png";
+import { useEffect, useState } from "react";
 
 const Signup = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    account_type: "",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const { type } = useParams();
   const titles = {
     "vc-firm": "VC FIRM",
     "private-investor": "PRIVATE INVESTOR",
     business: "BUSINESS",
   };
+
+  const accountType = titles[type as keyof typeof titles] || "";
+
+  // Update the formData when the component mounts
+  useEffect(() => {
+    // Create a mapping for account types to match backend expectations
+    const accountTypeMap: Record<string, string> = {
+      "vc-firm": "vcfirm",
+      "private-investor": "investor",
+      business: "portfolio",
+    };
+
+    // Get the mapped value or default to lowercase
+    const mappedAccountType =
+      accountTypeMap[type as keyof typeof accountTypeMap] ||
+      accountType.toLowerCase();
+
+    setFormData((prev) => ({
+      ...prev,
+      account_type: mappedAccountType,
+    }));
+  }, [accountType, type]);
 
   const getImage = () => {
     switch (type) {
@@ -85,6 +124,50 @@ const Signup = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const url = "https://ventify-backend.onrender.com/api/auth/signup";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    };
+
+    console.log("Formdata sent", formData);
+    try {
+      const response = await fetch(url, options);
+      const responseData = await response.json();
+      console.log("Full Response:", responseData);
+
+      if (!response.ok) {
+        // Check if the backend sends validation errors as an object
+        if (responseData.errors) {
+          const errorMessages = Object.values(responseData.errors)
+            .flat()
+            .join("\n");
+          alert(`Errors:\n${errorMessages}`);
+        } else {
+          // Otherwise, show the general message or a default one
+          const errorMessage =
+            responseData.message || "Signup failed. Please check your inputs.";
+          alert(errorMessage);
+        }
+        return;
+      }
+
+      navigate(`/dashboard/${type}`);
+    } catch (error) {
+      console.error("Error submitting signup:", error);
+      alert("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -112,53 +195,97 @@ const Signup = () => {
           </p>
 
           <div className="mt-3 w-[80%]">
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Name
                 </label>
                 <input
-                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Enter your name"
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
                 <input
-                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Enter your email"
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Password
                 </label>
                 <input
+                  id="password"
+                  name="password"
                   type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Enter your password"
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Phone number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="account_type"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Account Type
                 </label>
-                <select className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                  <option value="">Choose an option</option>
-                  <option className="hover:bg-yellow-500" value="option1">
-                    VC Firm
-                  </option>
-                  <option value="option2">Private Investor</option>
-                  <option value="option3">Business</option>
-                </select>
+                <input
+                  id="account"
+                  name="account_type"
+                  value={accountType}
+                  disabled
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                />
               </div>
+
+              <input type="hidden" name="account_type" value={accountType} />
 
               <div className="flex justify-between items-center mt-3">
                 <p>
@@ -179,6 +306,12 @@ const Signup = () => {
           </div>
         </div>
       </div>
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+        </div>
+      )}
     </div>
   );
 };

@@ -25,6 +25,7 @@ const Investments = () => {
           "https://ventify-backend.onrender.com/api/vcfirms/investments/all"
         );
         const data = await response.json();
+        console.log(data)
         setInvestments(data);
         setLoading(false);
       } catch (error) {

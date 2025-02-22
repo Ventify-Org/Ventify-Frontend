@@ -1,9 +1,10 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import vcFirmImage from "/vc-firm.png";
 import privateInvestorImage from "/private-investor.png";
 import businessImage from "/business.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -30,6 +31,26 @@ const Signup = () => {
   };
 
   const accountType = titles[type as keyof typeof titles] || "";
+
+  // Update the formData when the component mounts
+  useEffect(() => {
+    // Create a mapping for account types to match backend expectations
+    const accountTypeMap: Record<string, string> = {
+      "vc-firm": "vcfirm",
+      "private-investor": "investor",
+      business: "portfolio",
+    };
+
+    // Get the mapped value or default to lowercase
+    const mappedAccountType =
+      accountTypeMap[type as keyof typeof accountTypeMap] ||
+      accountType.toLowerCase();
+
+    setFormData((prev) => ({
+      ...prev,
+      account_type: mappedAccountType,
+    }));
+  }, [accountType, type]);
 
   const getImage = () => {
     switch (type) {
@@ -108,7 +129,44 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    navigate(`/dashboard/${type}/admin`);
+    const url = "https://ventify-backend.onrender.com/api/auth/signup/";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    };
+
+    console.log("Formdata sent", formData);
+    try {
+      const response = await fetch(url, options);
+      const responseData = await response.json();
+      console.log("Full Response:", responseData);
+
+      if (!response.ok) {
+        // Check if the backend sends validation errors as an object
+        if (responseData.errors) {
+          const errorMessages = Object.values(responseData.errors)
+            .flat()
+            .join("\n");
+          alert(`Errors:\n${errorMessages}`);
+        } else {
+          // Otherwise, show the general message or a default one
+          const errorMessage =
+            responseData.message || "Signup failed. Please check your inputs.";
+          alert(errorMessage);
+        }
+        return;
+      }
+
+      navigate(`/dashboard/${type}`);
+    } catch (error) {
+      console.error("Error submitting signup:", error);
+      alert("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

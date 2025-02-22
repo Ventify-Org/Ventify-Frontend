@@ -2,6 +2,7 @@ import { useState } from "react";
 import Messages from "./Messages";
 import Report from "./Report";
 import Raised from "./Raised";
+import { Link } from "react-router-dom";
 
 const DashboardInvestorPC = () => {
   const [activeSection, setActiveSection] = useState<string>("Report");
@@ -49,6 +50,15 @@ const DashboardInvestorPC = () => {
           </div>
         </div>
       </section>
+
+      <Link
+        to="/dashboard/private-investor/admin"
+        className="fixed bottom-10 right-10"
+      >
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out
+        </button>
+      </Link>
     </>
   );
 };

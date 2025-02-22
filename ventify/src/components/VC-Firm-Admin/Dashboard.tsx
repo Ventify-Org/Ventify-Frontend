@@ -6,6 +6,7 @@ import Applications from "./Applications";
 import VcChat from "./VC-Chat";
 import InvestorT from "./Investor-T";
 import Investments from "./Investments";
+import { Link } from "react-router-dom";
 
 const DashboardFirmAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -64,6 +65,17 @@ const DashboardFirmAdmin = () => {
           </div>
         </div>
       </section>
+
+      <Link to="/dashboard/vc-firm/pc" className="fixed bottom-10 right-10">
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out to PC
+        </button>
+      </Link>
+      <Link to="/dashboard/vc-firm/in" className="fixed bottom-10 right-10">
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out to Investor
+        </button>
+      </Link>
     </>
   );
 };

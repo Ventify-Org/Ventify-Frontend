@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardMenu from "./InvDashboardMenu";
 import Messages from "./Inv-Messages";
 import AllRaised from "./Raised";
+import { Link } from "react-router-dom";
 
 const DashboardBusinessIn = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -49,6 +50,12 @@ const DashboardBusinessIn = () => {
           </div>
         </div>
       </section>
+
+      <Link to="/dashboard/business/admin" className="fixed bottom-10 right-10">
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out
+        </button>
+      </Link>
     </>
   );
 };

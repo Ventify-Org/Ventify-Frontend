@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
+import { Link } from "react-router-dom";
 
 const DashboardInvestor = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -53,6 +54,15 @@ const DashboardInvestor = () => {
           </div>
         </div>
       </section>
+
+      <Link
+        to="/dashboard/private-investor/pc"
+        className="fixed bottom-10 right-10"
+      >
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out
+        </button>
+      </Link>
     </>
   );
 };

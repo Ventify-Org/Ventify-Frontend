@@ -3,6 +3,7 @@ import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
 import AllRaised from "./AllRaised";
 import Upload from "./Upload";
+import { Link } from "react-router-dom";
 
 const DashboardBusinessAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -51,6 +52,12 @@ const DashboardBusinessAdmin = () => {
           </div>
         </div>
       </section>
+
+      <Link to="/dashboard/business/in" className="fixed bottom-10 right-10">
+        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
+          Sign out
+        </button>
+      </Link>
     </>
   );
 };

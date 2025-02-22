@@ -11,7 +11,7 @@ const Signin = () => {
     email: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+  //const [isLoading, setIsLoading] = useState(false);
 
   const titles = {
     "vc-firm": "VC FIRM",
@@ -25,42 +25,13 @@ const Signin = () => {
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const url = "https://ventify-backend.onrender.com/api/auth/login";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    };
-
-    try {
-      const response = await fetch(url, options);
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        // Handle errors from backend
-        const errorMessage =
-          responseData.message || "Login failed. Please try again.";
-        alert(errorMessage);
-        return;
-      }
-
-      // Redirect to dashboard based on account type
-      if (type === "vc-firm") {
-        navigate("/dashboard/vc-firm/admin");
-      } else if (type === "private-investor") {
-        navigate("/dashboard/private-investor");
-      } else {
-        navigate("/dashboard/business");
-      }
-    } catch (error) {
-      console.error("Error logging in:", error);
-      alert("An unexpected error occurred. Please try again later.");
-    } finally {
-      setIsLoading(false);
+    // Redirect to dashboard based on account type
+    if (type === "vc-firm") {
+      navigate("/dashboard/vc-firm/admin");
+    } else if (type === "private-investor") {
+      navigate("/dashboard/private-investor");
+    } else {
+      navigate("/dashboard/business");
     }
   };
 
@@ -135,9 +106,8 @@ const Signin = () => {
                   <button
                     type="submit"
                     className="bg-yellow-400 text-black rounded-md py-2 px-4 w-full hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
-                    disabled={isLoading}
                   >
-                    {isLoading ? "Signing In..." : "Sign in"}
+                    Sign in
                   </button>
                 </div>
               </form>
@@ -157,12 +127,6 @@ const Signin = () => {
           <FaTwitter size={20} />
         </footer>
       </div>
-
-      {isLoading && (
-        <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
-        </div>
-      )}
     </>
   );
 };

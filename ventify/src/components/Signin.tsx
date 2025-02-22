@@ -29,9 +29,9 @@ const Signin = () => {
     if (type === "vc-firm") {
       navigate("/dashboard/vc-firm/admin");
     } else if (type === "private-investor") {
-      navigate("/dashboard/private-investor");
+      navigate("/dashboard/private-investor/admin");
     } else {
-      navigate("/dashboard/business");
+      navigate("/dashboard/business/admin");
     }
   };
 

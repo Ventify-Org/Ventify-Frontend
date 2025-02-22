@@ -108,7 +108,7 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    navigate(`/dashboard/${type}`);
+    navigate(`/dashboard/${type}/admin`);
   };
 
   return (

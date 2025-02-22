@@ -43,18 +43,18 @@ const AllRaised = () => {
   ];
 
   return (
-    <div className="overflow-x-auto mx-auto mt-20">
-      <table className="border-collapse border border-gray-300">
+    <div className="overflow-x-auto w-full mt-20">
+      <table className="w-full border-collapse border border-gray-300">
         <tbody>
           {headers.map((header, i) => (
             <tr key={i} className="text-center">
-              <td className="border border-gray-300 p-2 bg-[#4D7ABF]">
+              <td className="border border-gray-300 p-4 bg-[#4D7ABF] text-white font-semibold">
                 {header}
               </td>
               {demoData.map((item) => (
                 <td
                   key={item.id}
-                  className="border bg-[#88A8DC] border-gray-300 p-2"
+                  className="border border-gray-300 p-4 bg-[#88A8DC]"
                 >
                   {header === "Investors"
                     ? item.investors

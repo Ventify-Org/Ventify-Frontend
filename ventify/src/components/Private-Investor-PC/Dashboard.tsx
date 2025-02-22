@@ -1,17 +1,15 @@
 import { useState } from "react";
-import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
-import AllRaised from "./AllRaised";
-import Upload from "./Upload";
+import Report from "./Report";
+import Raised from "./Raised";
 
-const DashboardBusinessAdmin = () => {
-  const [activeSection, setActiveSection] = useState<string>("Dashboard");
+const DashboardInvestorPC = () => {
+  const [activeSection, setActiveSection] = useState<string>("Report");
 
   const sections: Record<string, JSX.Element> = {
-    Dashboard: <DashboardMenu />,
+    Report: <Report />,
     Messages: <Messages />,
-    "All Raised": <AllRaised />,
-    Upload: <Upload />,
+    Raised: <Raised />,
   };
 
   return (
@@ -23,7 +21,7 @@ const DashboardBusinessAdmin = () => {
 
         <div className="flex gap-4 flex-grow min-h-screen">
           {/* Sidebar */}
-          <div className="w-[15%] bg-[#00B38F] text-white flex flex-col items-center py-4 min-h-screen">
+          <div className="w-[15%] bg-[#4D4D4D] text-white flex flex-col items-center py-4 min-h-screen">
             <div className="w-20 h-20 rounded-full bg-green-400"></div>
             <p>James Gordon</p>
             <p>Microsoft</p>
@@ -34,7 +32,7 @@ const DashboardBusinessAdmin = () => {
                   key={section}
                   className={`px-5 py-2 w-full text-left ${
                     activeSection === section
-                      ? "bg-yellow-400 text-black font-bold"
+                      ? "bg-yellow-400 text-[#00378B]"
                       : ""
                   }`}
                   onClick={() => setActiveSection(section)}
@@ -55,4 +53,4 @@ const DashboardBusinessAdmin = () => {
   );
 };
 
-export default DashboardBusinessAdmin;
+export default DashboardInvestorPC;

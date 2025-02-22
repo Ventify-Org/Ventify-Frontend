@@ -4,7 +4,7 @@ import Messages from "./Messages";
 import DashboardMenu from "./DashboardMenu";
 import Investments from "./Investments";
 
-const DashboardFirmPC = () => {
+const DashboardFirmIN = () => {
   const [activeSection, setActiveSection] = useState<string>("Report");
 
   const sections: Record<string, JSX.Element> = {
@@ -55,4 +55,4 @@ const DashboardFirmPC = () => {
   );
 };
 
-export default DashboardFirmPC;
+export default DashboardFirmIN;

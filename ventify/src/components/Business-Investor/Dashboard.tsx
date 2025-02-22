@@ -1,17 +1,15 @@
 import { useState } from "react";
-import DashboardMenu from "./DashboardMenu";
-import Messages from "./Messages";
-import AllRaised from "./AllRaised";
-import Upload from "./Upload";
+import DashboardMenu from "./InvDashboardMenu";
+import Messages from "./Inv-Messages";
+import AllRaised from "./Raised";
 
-const DashboardBusinessAdmin = () => {
+const DashboardBusinessIn = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
     Messages: <Messages />,
     "All Raised": <AllRaised />,
-    Upload: <Upload />,
   };
 
   return (
@@ -55,4 +53,4 @@ const DashboardBusinessAdmin = () => {
   );
 };
 
-export default DashboardBusinessAdmin;
+export default DashboardBusinessIn;

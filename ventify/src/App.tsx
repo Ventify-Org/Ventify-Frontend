@@ -5,8 +5,11 @@ import Signup from "./components/Signup";
 import ForgotPassword from "./components/ForgotPassword";
 import DashboardFirmAdmin from "./components/VC-Firm-Admin/Dashboard";
 import DashboardInvestor from "./components/Private-Investor-Admin/Dashboard";
-import DashboardBusiness from "./components/Business-Admin/Dashboard";
 import DashboardFirmPC from "./components/VC-Firm-PC/Dashboard";
+import DashboardFirmIN from "./components/VC-Firm-In/Dashboard";
+import DashboardBusinessAdmin from "./components/Business-Admin/Dashboard";
+import DashboardBusinessIn from "./components/Business-Investor/Dashboard";
+import DashboardInvestorPC from "./components/Private-Investor-PC/Dashboard";
 
 const App = () => {
   return (
@@ -21,11 +24,23 @@ const App = () => {
           element={<DashboardFirmAdmin />}
         />
         <Route path="/dashboard/vc-firm/pc" element={<DashboardFirmPC />} />
+        <Route path="/dashboard/vc-firm/in" element={<DashboardFirmIN />} />
         <Route
-          path="/dashboard/private-investor"
+          path="/dashboard/private-investor/admin"
           element={<DashboardInvestor />}
         />
-        <Route path="/dashboard/business" element={<DashboardBusiness />} />
+        <Route
+          path="/dashboard/private-investor/pc"
+          element={<DashboardInvestorPC />}
+        />
+        <Route
+          path="/dashboard/business/admin"
+          element={<DashboardBusinessAdmin />}
+        />
+        <Route
+          path="/dashboard/business/in"
+          element={<DashboardBusinessIn />}
+        />
       </Routes>
     </Router>
   );

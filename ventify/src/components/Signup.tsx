@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import vcFirmImage from "/vc-firm.png";
@@ -145,22 +144,22 @@ const Signup = () => {
       console.log("Full Response:", responseData);
 
       if (!response.ok) {
-        // Check if the backend sends validation errors as an object
-        if (responseData.errors) {
-          const errorMessages = Object.values(responseData.errors)
-            .flat()
-            .join("\n");
-          alert(`Errors:\n${errorMessages}`);
+        // Check if the backend sends a specific error message
+        const errorMessage =
+          responseData.message || "Signup failed. Please check your inputs.";
+
+        // Display the error in a user-friendly way
+        if (errorMessage.includes("Email already exists")) {
+          alert(
+            "This email is already registered. Please use a different email or try logging in."
+          );
         } else {
-          // Otherwise, show the general message or a default one
-          const errorMessage =
-            responseData.message || "Signup failed. Please check your inputs.";
           alert(errorMessage);
         }
         return;
       }
 
-      navigate(`/dashboard/${type}`);
+      navigate(`/dashboard/${type}/admin`);
     } catch (error) {
       console.error("Error submitting signup:", error);
       alert("An unexpected error occurred. Please try again later.");

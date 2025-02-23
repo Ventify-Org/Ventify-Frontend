@@ -11,7 +11,7 @@ const Signin = () => {
     email: "",
     password: "",
   });
-  //const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const titles = {
     "vc-firm": "VC FIRM",
@@ -25,13 +25,56 @@ const Signin = () => {
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
-    // Redirect to dashboard based on account type
-    if (type === "vc-firm") {
-      navigate("/dashboard/vc-firm/admin");
-    } else if (type === "private-investor") {
-      navigate("/dashboard/private-investor/admin");
-    } else {
-      navigate("/dashboard/business/admin");
+    console.log("Form Data: ", formData);
+
+    setLoading(true); // Start loading
+
+    try {
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/auth/login/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Login Response Data: ", data);
+      const account_type = data.data.user.account_type;
+      console.log(account_type);
+
+      if (response.ok) {
+        const refreshToken = data.data.refresh_token;
+        const accessToken = data.data.access_token;
+
+        if (refreshToken && accessToken) {
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("authToken", accessToken);
+        } else {
+          console.error("Tokens are missing in the response.");
+          alert("Failed to retrieve tokens. Please try again.");
+          setLoading(false);
+          return;
+        }
+
+        if (account_type == "vcfirm") {
+          navigate("/dashboard/vc-firm/admin");
+        } else if (account_type == "investor") {
+          navigate("/dashboard/private-investor/admin");
+        } else if (account_type == "portfolio") {
+          navigate("/dashboard/business/admin");
+        }
+      } else {
+        alert(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -97,6 +140,7 @@ const Signin = () => {
                     id="password"
                     name="password"
                     value={formData.password}
+                    placeholder="Password"
                     onChange={handleInputChange}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     required
@@ -127,6 +171,12 @@ const Signin = () => {
           <FaTwitter size={20} />
         </footer>
       </div>
+
+      {loading && ( // Loading overlay
+        <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+        </div>
+      )}
     </>
   );
 };

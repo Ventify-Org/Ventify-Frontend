@@ -6,11 +6,13 @@ import Applications from "./Applications";
 import VcChat from "./VC-Chat";
 import InvestorT from "./Investor-T";
 import Investments from "./Investments";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BiLogOut } from "react-icons/bi";
 
 const DashboardFirmAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
@@ -26,6 +28,10 @@ const DashboardFirmAdmin = () => {
     Investments: <Investments />,
     "Investor T. No": <InvestorT />,
     "Portfolio T. No": <InvestorT />,
+  };
+
+  const logOut = () => {
+    navigate("/");
   };
 
   return (
@@ -57,6 +63,16 @@ const DashboardFirmAdmin = () => {
                 </button>
               ))}
             </nav>
+
+            <div className="mt-auto w-full p-4">
+              <button
+                onClick={logOut}
+                className="flex gap-2 items-center justify-center w-full mb-5 hover:bg-yellow-400 hover:text-[#00378B] py-2 px-4 rounded-md"
+              >
+                <BiLogOut />
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Main Content */}

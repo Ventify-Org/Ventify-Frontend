@@ -42,9 +42,8 @@ const Signin = () => {
       );
 
       const data = await response.json();
-      console.log("Login Response Data: ", data);
+
       const account_type = data.data.user.account_type;
-      console.log(account_type);
 
       if (response.ok) {
         const refreshToken = data.data.refresh_token;

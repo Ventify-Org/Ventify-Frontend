@@ -6,34 +6,17 @@ interface PCApplication {
   status: string;
   submitted_at: string;
   tracking_id: string;
+  text: () => Promise<string>;
+}
+
+interface FetchResponse {
+  status: number;
+  ok: boolean;
+  json: <T>() => Promise<T>;
 }
 
 const PortfolioCompanies = () => {
   const [activeSubsection, setActiveSubsection] = useState<string>("Admitted");
-  /*const [companies, setCompanies] = useState([
-    {
-      id: 1,
-      name: "Company A",
-      status: "admitted",
-      submitted_at: "2025-02-22T10:00:00.000Z",
-      tracking_id: "COMP-A-2025",
-    },
-    {
-      id: 2,
-      name: "Company B",
-      status: "pending",
-      submitted_at: "2025-02-21T09:00:00.000Z",
-      tracking_id: "COMP-B-2025",
-    },
-    {
-      id: 3,
-      name: "Company C",
-      status: "declined",
-      submitted_at: "2025-02-20T08:00:00.000Z",
-      tracking_id: "COMP-C-2025",
-    },
-  ]); */
-
   const [PCApplications, setPCApplications] = useState<PCApplication[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,17 +24,88 @@ const PortfolioCompanies = () => {
   useEffect(() => {
     const fetchPCApplications = async () => {
       setLoading(true);
-      try {
+
+      const refreshAccessToken = async () => {
+        const refresh_token = localStorage.getItem("refreshToken");
+        if (!refresh_token) {
+          throw new Error("No refresh token available");
+        }
+        console.log("Now to refresh the token");
+
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/vcfirms/investor-applications/all/"
+          "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ refresh: refresh_token }),
+          }
         );
+
         if (!response.ok) {
+          throw new Error("Failed to refresh token");
+        }
+
+        const data: { access: string } = await response.json();
+        console.log("Refreshed token successfully");
+        const newAccessToken = data.access;
+        console.log("New access token: ", newAccessToken);
+        localStorage.setItem("authToken", newAccessToken);
+        return newAccessToken;
+      };
+
+      const getApplications = async (token: string, retry: boolean = true) => {
+        const response: FetchResponse = await fetch(
+          "https://ventify-backend.onrender.com/api/vcfirms/investor-applications/all/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 401 && retry) {
+          console.log("Access token expired. Attempting to refresh...");
+          try {
+            const newToken = await refreshAccessToken();
+            return getApplications(newToken, false);
+          } catch (err) {
+            console.error("Failed to refresh token:", err);
+            throw new Error("Token refresh failed. Please log in again.");
+          }
+        }
+
+        if (!response.ok) {
+          console.log(
+            "Failed response:",
+            response.status,
+            await response.json()
+          );
           throw new Error("Failed to fetch data");
         }
-        const data = await response.json();
-        setPCApplications(data);
+
+        const data = (await response.json()) as {
+          results?: { data?: PCApplication[] };
+        };
+        if (data.results && data.results.data) {
+          setPCApplications(data.results.data);
+        } else {
+          setPCApplications([]); // Ensure it's always an array
+        }
+
         setError(null);
-      } catch (err: unknown) {
+      };
+
+      try {
+        const access_token = localStorage.getItem("authToken");
+        if (access_token) {
+          await getApplications(access_token);
+        } else {
+          throw new Error("No access token available");
+        }
+      } catch (err) {
+        console.error("Error fetching applications:", err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -66,41 +120,94 @@ const PortfolioCompanies = () => {
   }, []);
 
   const filterApplicationsByStatus = (status: string) => {
-    return PCApplications.filter(
+    const filtered = PCApplications.filter(
       (app) => app.status.toLowerCase() === status.toLowerCase()
     );
+    return filtered.length > 0 ? filtered : [];
   };
 
   const PCsubsections: Record<string, JSX.Element> = {
     Admitted: (
-      <Subsection
-        companies={filterApplicationsByStatus("admitted")}
-        extraInfo={["Submitted at", "Tracking ID"]}
-        showEmptyState
-      />
+      <>
+        {filterApplicationsByStatus("admitted").length === 0 ? (
+          <p className="text-center text-gray-500">No admitted applications.</p>
+        ) : (
+          <Subsection
+            companies={filterApplicationsByStatus("admitted")}
+            extraInfo={["Submitted at", "Tracking ID"]}
+            showEmptyState
+          />
+        )}
+      </>
     ),
     Pending: (
-      <Subsection
-        companies={filterApplicationsByStatus("pending")}
-        actions={[
-          { label: "Pending", type: "button", style: "bg-red-400" },
-          { label: "Decline", type: "button", style: "bg-green-400" },
-        ]}
-        extraInfo={["Submitted at", "Tracking ID"]}
-        showEmptyState
-      />
+      <>
+        {filterApplicationsByStatus("pending").length === 0 ? (
+          <p className="text-center text-gray-500">No pending applications.</p>
+        ) : (
+          <Subsection
+            companies={filterApplicationsByStatus("pending")}
+            actions={[
+              { label: "Pending", type: "button", style: "bg-red-400" },
+              { label: "Decline", type: "button", style: "bg-green-400" },
+            ]}
+            extraInfo={["Submitted at", "Tracking ID"]}
+            showEmptyState
+          />
+        )}
+      </>
     ),
     Declined: (
-      <Subsection
-        companies={filterApplicationsByStatus("declined")}
-        extraInfo={["Submitted at", "Tracking ID"]}
-        showEmptyState
-      />
+      <>
+        {filterApplicationsByStatus("declined").length === 0 ? (
+          <p className="text-center text-gray-500">No declined applications.</p>
+        ) : (
+          <p>Declined applications exist!</p>
+        )}
+      </>
     ),
-    "View All": <Subsection companies={PCApplications} showEmptyState />,
+    "View All": (
+      <>
+        {PCApplications.length === 0 ? (
+          <p className="text-center text-gray-500">
+            No applications available.
+          </p>
+        ) : (
+          <Subsection companies={PCApplications} showEmptyState />
+        )}
+      </>
+    ),
+    Deleted: (
+      <>
+        {filterApplicationsByStatus("declined").length === 0 ? (
+          <p className="text-center text-gray-500">No deleted applications.</p>
+        ) : (
+          <Subsection
+            companies={filterApplicationsByStatus("declined")}
+            extraInfo={["Submitted at", "Tracking ID"]}
+            showEmptyState
+          />
+        )}
+      </>
+    ),
+    Raised: (
+      <>
+        {PCApplications.length === 0 ? (
+          <p className="text-center text-gray-500">No records available.</p>
+        ) : (
+          <Subsection companies={PCApplications} showEmptyState />
+        )}
+      </>
+    ),
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <>
+        <p>Loading...</p>
+      </>
+    );
+
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -121,10 +228,9 @@ const PortfolioCompanies = () => {
         ))}
       </nav>
 
-      {/*<div>
+      <div className="mt-4 italic text-left">
         {PCsubsections[activeSubsection]}
-        <button onClick={() => handleDelete(1)}>Delete Company A</button>
-      </div>*/}
+      </div>
     </div>
   );
 };

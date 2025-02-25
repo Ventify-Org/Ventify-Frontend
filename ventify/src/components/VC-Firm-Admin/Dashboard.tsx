@@ -6,7 +6,7 @@ import Applications from "./Applications";
 import VcChat from "./VC-Chat";
 import InvestorT from "./Investor-T";
 import Investments from "./Investments";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
 const DashboardFirmAdmin = () => {
@@ -30,8 +30,40 @@ const DashboardFirmAdmin = () => {
     "Portfolio T. No": <InvestorT />,
   };
 
-  const logOut = () => {
-    navigate("/");
+  const logOut = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (!refreshToken) {
+      console.error("Refresh token not found in localStorage");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/auth/logout/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        }
+      );
+
+      if (response.ok) {
+        localStorage.removeItem("refresh_token");
+        navigate("/");
+      } else {
+        console.error("Logout failed:", response.statusText);
+        //localStorage.removeItem('refresh_token');
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      //localStorage.removeItem('refresh_token');
+      navigate("/");
+    }
   };
 
   return (
@@ -81,17 +113,6 @@ const DashboardFirmAdmin = () => {
           </div>
         </div>
       </section>
-
-      <Link to="/dashboard/vc-firm/pc" className="fixed bottom-10 right-10">
-        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
-          Sign out to PC
-        </button>
-      </Link>
-      <Link to="/dashboard/vc-firm/in" className="fixed bottom-10 right-10">
-        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
-          Sign out to Investor
-        </button>
-      </Link>
     </>
   );
 };

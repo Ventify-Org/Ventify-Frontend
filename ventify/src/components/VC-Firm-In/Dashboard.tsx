@@ -3,9 +3,11 @@ import VcChat from "./VC-Chat";
 import Messages from "./Messages";
 import DashboardMenu from "./DashboardMenu";
 import Investments from "./Investments";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BiLogOut } from "react-icons/bi";
 
 const DashboardFirmIN = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<string>("Report");
 
   const sections: Record<string, JSX.Element> = {
@@ -13,6 +15,42 @@ const DashboardFirmIN = () => {
     "VC-Chat": <VcChat />,
     Messages: <Messages />,
     Investments: <Investments />,
+  };
+
+  const logOut = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (!refreshToken) {
+      console.error("Refresh token not found in localStorage");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/auth/logout/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        }
+      );
+
+      if (response.ok) {
+        localStorage.removeItem("refresh_token");
+        navigate("/");
+      } else {
+        console.error("Logout failed:", response.statusText);
+        //localStorage.removeItem('refresh_token');
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      //localStorage.removeItem('refresh_token');
+      navigate("/");
+    }
   };
 
   return (
@@ -44,6 +82,16 @@ const DashboardFirmIN = () => {
                 </button>
               ))}
             </nav>
+
+            <div className="mt-auto w-full p-4">
+              <button
+                onClick={logOut}
+                className="flex gap-2 items-center justify-center w-full mb-5 hover:bg-yellow-400 hover:text-[#00378B] py-2 px-4 rounded-md"
+              >
+                <BiLogOut />
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Main Content */}

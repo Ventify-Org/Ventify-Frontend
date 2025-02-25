@@ -2,15 +2,53 @@ import { useState } from "react";
 import Raised from "./Raised";
 import Messages from "./Messages";
 import Report from "./Report";
-import { Link } from "react-router-dom";
+import { BiLogOut } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 const DashboardFirmPC = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<string>("Report");
 
   const sections: Record<string, JSX.Element> = {
     Report: <Report />,
     Messages: <Messages />,
     Raised: <Raised />,
+  };
+
+  const logOut = async () => {
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (!refreshToken) {
+      console.error("Refresh token not found in localStorage");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/auth/logout/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        }
+      );
+
+      if (response.ok) {
+        localStorage.removeItem("refresh_token");
+        navigate("/");
+      } else {
+        console.error("Logout failed:", response.statusText);
+        //localStorage.removeItem('refresh_token');
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      //localStorage.removeItem('refresh_token');
+      navigate("/");
+    }
   };
 
   return (
@@ -42,6 +80,16 @@ const DashboardFirmPC = () => {
                 </button>
               ))}
             </nav>
+
+            <div className="mt-auto w-full p-4">
+              <button
+                onClick={logOut}
+                className="flex gap-2 items-center justify-center w-full mb-5 hover:bg-yellow-400 hover:text-[#00378B] py-2 px-4 rounded-md"
+              >
+                <BiLogOut />
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Main Content */}
@@ -50,17 +98,6 @@ const DashboardFirmPC = () => {
           </div>
         </div>
       </section>
-
-      <Link to="/dashboard/vc-firm/admin" className="fixed bottom-10 right-10">
-        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
-          Sign out to Admin
-        </button>
-      </Link>
-      <Link to="/dashboard/vc-firm/in" className="fixed bottom-10 right-10">
-        <button className="bg-red-500 text-white px-4 py-2 rounded-md">
-          Sign out to Investor
-        </button>
-      </Link>
     </>
   );
 };

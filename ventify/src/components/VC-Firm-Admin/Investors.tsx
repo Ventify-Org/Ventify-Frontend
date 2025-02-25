@@ -3,9 +3,11 @@ import Subsection from "./ApplicationSubs";
 
 interface InvestorApplication {
   id: number;
+  name: string;
   status: string;
   submitted_at: string;
   tracking_id: string;
+  text: () => Promise<string>;
 }
 
 const Investors = () => {
@@ -117,57 +119,191 @@ const Investors = () => {
     return filtered.length > 0 ? filtered : [];
   };
 
+  const updateApplicationStatus = (id: number, newStatus: string) => {
+    console.log(`Updating application ${id} to ${newStatus}`);
+    setInvestorApplications((prevApps) => {
+      const updatedApps = prevApps.map((app) =>
+        app.id === id ? { ...app, status: newStatus } : app
+      );
+      console.log("Updated Applications:", updatedApps);
+      return updatedApps;
+    });
+  };
+
   const INsubsections: Record<string, JSX.Element> = {
     Admitted: (
       <>
-        {filterApplicationsByStatus("admitted").length === 0 ? (
-          <p className="text-center text-gray-500">No admitted applications.</p>
-        ) : (
-          <Subsection
-            companies={filterApplicationsByStatus("admitted")}
-            extraInfo={["Submitted at", "Tracking ID"]}
-            showEmptyState
-          />
-        )}
+        <Subsection
+          companies={[
+            {
+              id: 999,
+              name: "Demo Company",
+              status: "admitted",
+              submitted_at: "2025-02-22T09:00:00Z",
+              tracking_id: "DEMO-ADM-00001",
+            },
+            ...filterApplicationsByStatus("admitted"),
+          ]}
+          actions={[
+            {
+              label: "Request for Documents",
+              type: "button",
+              style: "bg-blue-400 text-white",
+              onClick: async (id: number) => {
+                const requestDocs = async (token: string) => {
+                  const response = await fetch(
+                    `https://ventify-backend.onrender.com/api/vcfirms/investor-applications/${id}/request-docs/`,
+                    {
+                      method: "PATCH",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Token ${token}`,
+                      },
+                      body: JSON.stringify({
+                        message:
+                          "Please provide additional financial documents.",
+                      }),
+                    }
+                  );
+
+                  if (response.ok) {
+                    const data = await response.json();
+                    console.log("Response Data:", data);
+                    alert("Request for documents sent successfully!");
+
+                    if (data.status === "pending") {
+                      updateApplicationStatus(id, "pending");
+                    }
+                  } else if (response.status === 401) {
+                    console.log("Token expired, attempting to refresh...");
+                    const newToken = await refreshAccessToken();
+                    if (newToken) {
+                      return requestDocs(newToken);
+                    } else {
+                      alert("Failed to refresh token. Please log in again.");
+                    }
+                  } else {
+                    const errorDetails = await response.json();
+                    console.error("Error Details:", errorDetails);
+
+                    if (
+                      errorDetails.message &&
+                      errorDetails.message.includes("does not exist")
+                    ) {
+                      alert("Company with this ID does not exist.");
+                    } else {
+                      alert("Failed to request documents. Please try again.");
+                    }
+                  }
+                };
+
+                try {
+                  const token = localStorage.getItem("authToken");
+                  if (!token) {
+                    alert("No authentication token found. Please log in.");
+                    return;
+                  }
+                  await requestDocs(token);
+                } catch (error) {
+                  console.error("Error requesting documents:", error);
+                  alert("An error occurred. Please try again.");
+                }
+              },
+            },
+          ]}
+          showTrashIcon
+          showEmptyState
+          onDelete={updateApplicationStatus}
+        />
       </>
     ),
+
     Pending: (
       <>
-        {filterApplicationsByStatus("pending").length === 0 ? (
-          <p className="text-center text-gray-500">No pending applications.</p>
-        ) : (
-          <Subsection
-            companies={filterApplicationsByStatus("pending")}
-            actions={[
-              { label: "Pending", type: "button", style: "bg-red-400" },
-              { label: "Decline", type: "button", style: "bg-green-400" },
-            ]}
-            extraInfo={["Submitted at", "Tracking ID"]}
-            showEmptyState
-          />
-        )}
+        <Subsection
+          companies={[
+            {
+              id: 0,
+              name: "Demo Company",
+              status: "pending",
+              submitted_at: "2025-02-24T10:00:00Z",
+              tracking_id: "DEMO-12345",
+            },
+            ...filterApplicationsByStatus("pending"),
+          ]}
+          actions={[
+            {
+              label: "Admit",
+              type: "button",
+              style: "bg-green-400",
+              onClick: (id: number) => updateApplicationStatus(id, "admitted"),
+            },
+            {
+              label: "Decline",
+              type: "button",
+              style: "bg-red-400",
+              onClick: (id: number) => updateApplicationStatus(id, "declined"),
+            },
+          ]}
+          showActionsOnly
+          showEmptyState
+        />
       </>
     ),
+
     Declined: (
       <>
-        {filterApplicationsByStatus("declined").length === 0 ? (
-          <p className="text-center text-gray-500">No declined applications.</p>
-        ) : (
-          <p>Declined applications exist!</p>
-        )}
+        <Subsection
+          companies={[
+            {
+              id: 888, // Unique ID for demo data
+              name: "Demo Company",
+              status: "declined",
+              submitted_at: "2025-02-20T10:00:00Z",
+              tracking_id: "DEMO-DEC-00001",
+            },
+            ...filterApplicationsByStatus("declined"),
+          ]}
+          showEmptyState
+        />
       </>
     ),
+
+    "View All": (
+      <>
+        <Subsection
+          companies={[
+            {
+              id: 777,
+              name: "Demo Company",
+              status: "admitted",
+              submitted_at: "2025-02-18T09:00:00Z",
+              tracking_id: "DEMO-ALL-00001",
+            },
+            ...investorApplications,
+          ]}
+          showEmptyState
+          isViewAll
+        />
+      </>
+    ),
+
     Deleted: (
       <>
-        {filterApplicationsByStatus("declined").length === 0 ? (
-          <p className="text-center text-gray-500">No deleted applications.</p>
-        ) : (
-          <Subsection
-            companies={filterApplicationsByStatus("declined")}
-            extraInfo={["Submitted at", "Tracking ID"]}
-            showEmptyState
-          />
-        )}
+        <Subsection
+          companies={[
+            {
+              id: 888, // Unique ID for demo data
+              name: "Demo Company",
+              status: "deleted",
+              submitted_at: "2025-02-15T09:00:00Z",
+              tracking_id: "DEMO-DEL-00001",
+            },
+            ...filterApplicationsByStatus("deleted"),
+          ]}
+          showEmptyState
+          isDeleted
+        />
       </>
     ),
   };

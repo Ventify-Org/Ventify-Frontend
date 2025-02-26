@@ -186,7 +186,7 @@ const Signup = () => {
             </>
           )}
         </div>
-        <div className="w-1/2 mt-5 flex justify-center items-center flex-col h-screen border-l-2 border-gray-200">
+        <div className="w-1/2 mt-8 flex justify-center items-center flex-col h-screen border-l-2 border-gray-200">
           <p className="text-3xl">
             SIGN UP AS A{" "}
             <span className="text-3xl">

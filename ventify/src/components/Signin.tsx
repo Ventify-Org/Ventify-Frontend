@@ -6,6 +6,7 @@ import { FormEvent, useState } from "react";
 const Signin = () => {
   const navigate = useNavigate();
   const { type } = useParams();
+  console.log("Type from URL Params: ", type);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -14,9 +15,9 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
 
   const titles = {
-    "vc-firm": "VC FIRM",
-    "private-investor": "PRIVATE INVESTOR",
-    business: "BUSINESS",
+    "vc-firm": { title: "VC FIRM", accountType: "vcfirm" },
+    "private-investor": { title: "PRIVATE INVESTOR", accountType: "investor" },
+    business: { title: "BUSINESS", accountType: "portfolio" },
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,8 +27,7 @@ const Signin = () => {
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
     console.log("Form Data: ", formData);
-
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -42,8 +42,9 @@ const Signin = () => {
       );
 
       const data = await response.json();
-
+      console.log(data);
       const account_type = data.data.user.account_type;
+      console.log(account_type);
 
       if (response.ok) {
         const refreshToken = data.data.refresh_token;
@@ -59,15 +60,17 @@ const Signin = () => {
           return;
         }
 
-        if (account_type == "vcfirm") {
+        if (type === "vc-firm") {
           navigate("/dashboard/vc-firm/admin");
-        } else if (account_type == "investor") {
+        } else if (type === "private-investor") {
           navigate("/dashboard/private-investor/admin");
-        } else if (account_type == "portfolio") {
+        } else if (type === "business") {
           navigate("/dashboard/business/admin");
+        } else {
+          // If none of the types match, fallback to a default page
+          console.warn("Unknown type, redirecting to default page.");
+          navigate("/signin");
         }
-      } else {
-        alert(data.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -86,7 +89,7 @@ const Signin = () => {
             <div className="flex flex-col justify-center items-center pt-15">
               <p className="text-4xl font-bold">SIGN IN AS A</p>
               <p className="text-4xl font-bold">
-                {titles[type as keyof typeof titles] || "Sign In"}
+                {titles[type as keyof typeof titles]?.title || "Sign In"}
               </p>
 
               <p className="text-lg my-6 text-center">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
+import Investments from "./Investments";
 import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
@@ -11,12 +12,7 @@ const DashboardInvestor = () => {
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
     Messages: <Messages />,
-    "All Investments": (
-      <div>
-        <h1 className="text-3xl font-bold">Investor Insights</h1>
-        <p>Track your investments and market trends.</p>
-      </div>
-    ),
+    "All Investments": <Investments />,
   };
 
   const logOut = async () => {

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "./Header";
 import vcFirmImage from "/vc-firm.png";
 import privateInvestorImage from "/private-investor.png";
@@ -290,10 +290,9 @@ const Signup = () => {
               <div className="flex justify-between items-center mt-3">
                 <p>
                   Already have a account?
-                  <a href={`/signin/${type}`} className="underline">
-                    {" "}
+                  <Link to={`/signin/${type}/`} className="underline">
                     Sign In
-                  </a>
+                  </Link>
                 </p>
                 <button
                   type="submit"

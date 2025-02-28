@@ -8,6 +8,7 @@ import InvestorT from "./Investor-T";
 import Investments from "./Investments";
 import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import Invites from "./Invites";
 
 const DashboardFirmAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
@@ -28,6 +29,7 @@ const DashboardFirmAdmin = () => {
     Investments: <Investments />,
     "Investor T. No": <InvestorT />,
     "Portfolio T. No": <InvestorT />,
+    Invites: <Invites />,
   };
 
   const logOut = async () => {

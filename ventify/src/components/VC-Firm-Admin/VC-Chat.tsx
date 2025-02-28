@@ -29,7 +29,7 @@ const VcChat = () => {
     const fetchForums = async () => {
       try {
         const response = await fetch(
-          "https://ventify-backend.onrender.com/pi/vcfirms/forum/get-forum"
+          "https://ventify-backend.onrender.com/api/vcfirms/forum/get-forum"
         );
         if (response.ok) {
           const data = await response.json();

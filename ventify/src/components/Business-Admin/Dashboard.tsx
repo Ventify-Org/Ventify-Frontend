@@ -3,6 +3,7 @@ import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
 import AllRaised from "./AllRaised";
 import Upload from "./Upload";
+import Applications from "./Applications"
 import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 
@@ -12,6 +13,7 @@ const DashboardBusinessAdmin = () => {
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
+    Applications: <Applications />,
     Messages: <Messages />,
     "All Raised": <AllRaised />,
     Upload: <Upload />,

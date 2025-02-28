@@ -6,7 +6,6 @@ import { FormEvent, useState } from "react";
 const Signin = () => {
   const navigate = useNavigate();
   const { type } = useParams();
-  console.log("Type from URL Params: ", type);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,7 +25,6 @@ const Signin = () => {
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Form Data: ", formData);
     setLoading(true);
 
     try {
@@ -42,14 +40,15 @@ const Signin = () => {
       );
 
       const data = await response.json();
-      console.log(data);
-      const account_type = data.data.user.account_type;
-      console.log(account_type);
+      console.log("Backend Response:", data);
 
       if (response.ok) {
+        const account_type = data.data.user.account_type;
+        console.log("Account Type:", account_type);
+
+        // Store tokens
         const refreshToken = data.data.refresh_token;
         const accessToken = data.data.access_token;
-
         if (refreshToken && accessToken) {
           localStorage.setItem("refreshToken", refreshToken);
           localStorage.setItem("authToken", accessToken);
@@ -60,17 +59,20 @@ const Signin = () => {
           return;
         }
 
-        if (type === "vc-firm") {
+        // Set the account type in state
+        // Route based on account_type from backend
+        if (account_type === "vcfirm") {
           navigate("/dashboard/vc-firm/admin");
-        } else if (type === "private-investor") {
+        } else if (account_type === "investor") {
           navigate("/dashboard/private-investor/admin");
-        } else if (type === "business") {
+        } else if (account_type === "portfolio") {
           navigate("/dashboard/business/admin");
         } else {
-          // If none of the types match, fallback to a default page
-          console.warn("Unknown type, redirecting to default page.");
+          console.warn("Unknown account type, redirecting to default page.");
           navigate("/signin");
         }
+      } else {
+        alert("Failed to log in. Please check your email and password.");
       }
     } catch (error) {
       console.error("Error during login:", error);

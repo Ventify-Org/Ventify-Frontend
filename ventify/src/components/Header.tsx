@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Header = () => {
   const handleSmoothScroll = (id: string) => {
     const element = document.getElementById(id);
@@ -14,9 +16,9 @@ const Header = () => {
         <div className="hidden md:flex items-center space-x-8">
           <nav className="flex space-x-18">
             {["Home", "About us", "Services", "Contact us"].map((item) => (
-              <a
+              <Link
                 key={item}
-                href={`#${item.toLowerCase()}`}
+                to={`#${item.toLowerCase()}`}
                 className="text-black transition duration-300"
                 onClick={(e) => {
                   e.preventDefault();
@@ -24,7 +26,7 @@ const Header = () => {
                 }}
               >
                 {item}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

@@ -98,13 +98,13 @@ const Signin = () => {
             </div>
 
             <p className="mt-auto pb-10">
-              Don't have an account?{" "}
-              <a
+              Don't have an account?
+              <Link
                 className="text-yellow-500 hover:underline"
-                href={`/signup/${type}`}
+                to={`/signup/${type}/`}
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
 

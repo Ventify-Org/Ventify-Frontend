@@ -3,9 +3,10 @@ import DashboardMenu from "./DashboardMenu";
 import Messages from "./Messages";
 import AllRaised from "./AllRaised";
 import Upload from "./Upload";
-import Applications from "./Applications"
+import Applications from "./Applications";
 import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import Invites from "./Invites";
 
 const DashboardBusinessAdmin = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const DashboardBusinessAdmin = () => {
     Messages: <Messages />,
     "All Raised": <AllRaised />,
     Upload: <Upload />,
+    Invites: <Invites />,
   };
 
   const logOut = async () => {

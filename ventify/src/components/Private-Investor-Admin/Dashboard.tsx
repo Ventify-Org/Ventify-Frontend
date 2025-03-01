@@ -4,6 +4,7 @@ import Messages from "./Messages";
 import Investments from "./Investments";
 import { useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import Invites from "./Invites";
 
 const DashboardInvestor = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const DashboardInvestor = () => {
     Dashboard: <DashboardMenu />,
     Messages: <Messages />,
     "All Investments": <Investments />,
+    Invites: <Invites />,
   };
 
   const logOut = async () => {

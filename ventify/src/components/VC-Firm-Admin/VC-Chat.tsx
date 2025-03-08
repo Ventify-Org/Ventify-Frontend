@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BiBell, BiChat, BiLike, BiSearch, BiTrash } from "react-icons/bi";
 
 const demoForums = [
-  { id: "demo-1", title: "Forum 1" },
-  { id: "demo-2", title: "Forum 2" },
-  { id: "demo-3", title: "Forum 3" },
+  { id: "112", title: "Forum 1" },
+  { id: "122", title: "Forum 2" },
+  { id: "123", title: "Forum 3" },
 ];
 
 const VcChat = () => {
@@ -13,7 +13,7 @@ const VcChat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Welcome to the forum! Feel free to post your thoughts.",
+      text: "Welcome to the forum!! Feel free to post your thoughts.",
       likes: 0,
     },
     {
@@ -24,40 +24,166 @@ const VcChat = () => {
   ]);
   const [newMessage, setNewMessage] = useState("");
 
-  // Fetch forums from backend
-  useEffect(() => {
-    const fetchForums = async () => {
-      try {
-        const response = await fetch(
-          "https://ventify-backend.onrender.com/api/vcfirms/forum/get-forum"
-        );
-        if (response.ok) {
-          const data = await response.json();
-          const backendForums = data.map(
-            (forum: { id: number; name: string }) => ({
-              id: forum.id.toString(),
-              title: forum.name,
-            })
-          );
-          setForums([...demoForums, ...backendForums]);
-        } else {
-          console.error("Failed to fetch forums");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refreshAccessToken = useCallback(async () => {
+    if (isRefreshing) return;
+
+    setIsRefreshing(true);
+
+    const refresh_token = localStorage.getItem("refreshToken");
+    if (!refresh_token) {
+      throw new Error("No refresh token available");
+    }
+
+    try {
+      console.log("Refreshing token...");
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh: refresh_token }),
         }
-      } catch (error) {
-        console.error("Error fetching forums:", error);
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to refresh token");
       }
-    };
 
+      const data: { access: string } = await response.json();
+      const newAccessToken = data.access;
+
+      localStorage.setItem("authToken", newAccessToken);
+      console.log("Token refreshed successfully");
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+    } finally {
+      setIsRefreshing(false); // Reset state after attempt
+    }
+  }, [isRefreshing]);
+
+  const fetchForums = useCallback(async () => {
+    try {
+      let accessToken = localStorage.getItem("authToken");
+
+      if (!accessToken) {
+        try {
+          if (!isRefreshing) await refreshAccessToken();
+          accessToken = localStorage.getItem("authToken");
+        } catch (refreshError) {
+          console.error(
+            "Failed to refresh token before fetching forums:",
+            refreshError
+          );
+          return;
+        }
+      }
+
+      if (!accessToken) {
+        console.error("Access token still missing after refresh attempt");
+        return;
+      }
+
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/vcfirms/forum/get-forum/",
+        {
+          headers: { Authorization: `Token ${accessToken}` },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data fetched successfully:", data);
+
+        const backendForums = Array.isArray(data)
+          ? data.map((forum) => ({
+              id: forum.id,
+              title: forum.name,
+            }))
+          : [{ id: data.id, title: data.name }];
+
+        setForums([...demoForums, ...backendForums]);
+      } else if (response.status === 401 && !isRefreshing) {
+        console.log("Token expired — refreshing and retrying...");
+        try {
+          await refreshAccessToken();
+          await fetchForums(); // Retry after refresh
+        } catch (refreshError) {
+          console.error(
+            "Failed to refresh token or retry fetch:",
+            refreshError
+          );
+        }
+      } else {
+        console.error("Failed to fetch forums:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching forums:", error);
+    }
+  }, [refreshAccessToken, isRefreshing]); // Add only necessary dependencies
+
+  useEffect(() => {
     fetchForums();
-  }, []);
+  }, [fetchForums]); // Now fetchForums is stable and won't recreate on every render
 
-  const handlePostMessage = () => {
-    if (newMessage.trim() !== "") {
-      setMessages([
-        ...messages,
-        { id: Date.now(), text: newMessage, likes: 0 },
-      ]);
-      setNewMessage("");
+  const handleMakePost = async () => {
+    try {
+      let accessToken = localStorage.getItem("authToken");
+
+      if (!accessToken) {
+        try {
+          if (!isRefreshing) await refreshAccessToken();
+          accessToken = localStorage.getItem("authToken");
+        } catch (refreshError) {
+          console.error(
+            "Failed to refresh token before making post:",
+            refreshError
+          );
+          return;
+        }
+      }
+
+      if (!accessToken) {
+        console.error("Access token still missing after refresh attempt");
+        return;
+      }
+
+      const response = await fetch(
+        `https://ventify-backend.onrender.com/api/forum-posts/make-post/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${accessToken}`,
+          },
+          body: JSON.stringify({
+            forum_id: Number(selectedForum), // Use selected forum id
+            title: "New Post", // Default uneditable title
+            content: newMessage, // User inputted content
+            author_id: "4",
+          }),
+        }
+      );
+
+      if (response.ok) {
+        alert("Post created successfully");
+        setNewMessage(""); // Clear input after successful post
+      } else if (response.status === 401 && !isRefreshing) {
+        console.log("Token expired — refreshing and retrying...");
+        try {
+          await refreshAccessToken();
+          await handleMakePost(); // Retry after refresh
+        } catch (refreshError) {
+          console.error("Failed to refresh token or retry post:", refreshError);
+        }
+      } else {
+        console.error("Failed to make post:", response.status);
+        const errorData = await response.json();
+        console.error("Error details:", errorData);
+      }
+    } catch (error) {
+      console.error("Error making post:", error);
     }
   };
 
@@ -73,13 +199,58 @@ const VcChat = () => {
     setMessages(messages.filter((msg) => msg.id !== id));
   };
 
-  // Handle Forum Click
-  const handleForumClick = (id: string) => {
-    // Navigate to the forum details page using the ID
-    window.location.href = `https://ventify-backend.onrender.com/api/investors/forum/${id}/get-forum`;
+  const handleForumClick = async (id: string) => {
+    alert(id);
+    try {
+      let accessToken = localStorage.getItem("authToken");
+
+      if (!accessToken) {
+        try {
+          if (!isRefreshing) await refreshAccessToken();
+          accessToken = localStorage.getItem("authToken");
+        } catch (refreshError) {
+          console.error(
+            "Failed to refresh token before fetching forums:",
+            refreshError
+          );
+          return;
+        }
+      }
+
+      if (!accessToken) {
+        console.error("Access token still missing after refresh attempt");
+        return;
+      }
+
+      const response = await fetch(
+        `https://ventify-backend.onrender.com/api/investors/forum/${id}/get-forum/`,
+        {
+          headers: { Authorization: `Token ${accessToken}` },
+        }
+      );
+      setSelectedForum(id);
+
+      if (response.ok) {
+        alert("done");
+      } else if (response.status === 401 && !isRefreshing) {
+        console.log("Token expired — refreshing and retrying...");
+        try {
+          await refreshAccessToken();
+          await fetchForums(); // Retry after refresh
+        } catch (refreshError) {
+          console.error(
+            "Failed to refresh token or retry fetch:",
+            refreshError
+          );
+        }
+      } else {
+        console.error("Failed to fetch forums:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching forums:", error);
+    }
   };
 
-  // When no forum is selected, show the selection screen
   if (selectedForum === null) {
     return (
       <div className="flex flex-col items-center w-full h-full p-4 bg-gray-100">
@@ -99,12 +270,10 @@ const VcChat = () => {
     );
   }
 
-  // If a forum is selected, show the chat interface
   const selectedForumTitle = forums.find((f) => f.id === selectedForum)?.title;
 
   return (
     <div className="flex flex-col items-center w-full h-full p-4 bg-gray-100">
-      {/* Forum Title and Back Button */}
       <div className="w-full flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">{selectedForumTitle}</h1>
         <button
@@ -128,7 +297,7 @@ const VcChat = () => {
               onChange={(e) => setNewMessage(e.target.value)}
             />
             <button
-              onClick={handlePostMessage}
+              onClick={() => handleMakePost()}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               Post

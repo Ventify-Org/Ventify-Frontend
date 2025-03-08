@@ -20,21 +20,21 @@ const Intro = () => {
           <div className="gap-8 items-center p-12 flex flex-col h-full justify-center">
             <button
               className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
-              onClick={() => navigate("/signup/vc-firm")}
+              onClick={() => navigate("/signin/vc-firm/")}
             >
-              Sign up as a VC firm
+              Sign in as a VC firm
             </button>
             <button
               className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
-              onClick={() => navigate("/signup/private-investor")}
+              onClick={() => navigate("/signin/private-investor/")}
             >
-              Sign up as a Private Investor
+              Sign in as a Private Investor
             </button>
             <button
               className="bg-[#FFD700]/40 px-2 py-2 border-0 rounded-md min-w-[220px]"
-              onClick={() => navigate("/signup/business")}
+              onClick={() => navigate("/signin/business/")}
             >
-              Sign up as a Business
+              Sign in as a Business
             </button>
           </div>
         </div>

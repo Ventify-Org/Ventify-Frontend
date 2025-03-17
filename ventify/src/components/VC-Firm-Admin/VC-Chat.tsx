@@ -1,15 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { BiBell, BiChat, BiLike, BiSearch, BiTrash } from "react-icons/bi";
 
-const demoForums = [
-  { id: "112", title: "Forum 1" },
-  { id: "122", title: "Forum 2" },
-  { id: "123", title: "Forum 3" },
-];
-
 const VcChat = () => {
-  const [selectedForum, setSelectedForum] = useState<string | null>(null);
-  const [forums, setForums] = useState(demoForums);
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -63,70 +55,6 @@ const VcChat = () => {
     }
   }, [isRefreshing]);
 
-  const fetchForums = useCallback(async () => {
-    try {
-      let accessToken = localStorage.getItem("authToken");
-
-      if (!accessToken) {
-        try {
-          if (!isRefreshing) await refreshAccessToken();
-          accessToken = localStorage.getItem("authToken");
-        } catch (refreshError) {
-          console.error(
-            "Failed to refresh token before fetching forums:",
-            refreshError
-          );
-          return;
-        }
-      }
-
-      if (!accessToken) {
-        console.error("Access token still missing after refresh attempt");
-        return;
-      }
-
-      const response = await fetch(
-        "https://ventify-backend.onrender.com/api/vcfirms/forum/get-forum/",
-        {
-          headers: { Authorization: `Token ${accessToken}` },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Data fetched successfully:", data);
-
-        const backendForums = Array.isArray(data)
-          ? data.map((forum) => ({
-              id: forum.id,
-              title: forum.name,
-            }))
-          : [{ id: data.id, title: data.name }];
-
-        setForums([...demoForums, ...backendForums]);
-      } else if (response.status === 401 && !isRefreshing) {
-        console.log("Token expired — refreshing and retrying...");
-        try {
-          await refreshAccessToken();
-          await fetchForums(); // Retry after refresh
-        } catch (refreshError) {
-          console.error(
-            "Failed to refresh token or retry fetch:",
-            refreshError
-          );
-        }
-      } else {
-        console.error("Failed to fetch forums:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching forums:", error);
-    }
-  }, [refreshAccessToken, isRefreshing]); // Add only necessary dependencies
-
-  useEffect(() => {
-    fetchForums();
-  }, [fetchForums]); // Now fetchForums is stable and won't recreate on every render
-
   const handleMakePost = async () => {
     try {
       let accessToken = localStorage.getItem("authToken");
@@ -158,9 +86,8 @@ const VcChat = () => {
             Authorization: `Token ${accessToken}`,
           },
           body: JSON.stringify({
-            forum_id: Number(selectedForum), // Use selected forum id
-            title: "New Post", // Default uneditable title
-            content: newMessage, // User inputted content
+            forum_id: 1,
+            content: newMessage,
             author_id: "4",
           }),
         }
@@ -168,12 +95,12 @@ const VcChat = () => {
 
       if (response.ok) {
         alert("Post created successfully");
-        setNewMessage(""); // Clear input after successful post
+        setNewMessage("");
       } else if (response.status === 401 && !isRefreshing) {
         console.log("Token expired — refreshing and retrying...");
         try {
           await refreshAccessToken();
-          await handleMakePost(); // Retry after refresh
+          await handleMakePost();
         } catch (refreshError) {
           console.error("Failed to refresh token or retry post:", refreshError);
         }
@@ -199,8 +126,7 @@ const VcChat = () => {
     setMessages(messages.filter((msg) => msg.id !== id));
   };
 
-  const handleForumClick = async (id: string) => {
-    alert(id);
+  const getForum = useCallback(async () => {
     try {
       let accessToken = localStorage.getItem("authToken");
 
@@ -223,20 +149,18 @@ const VcChat = () => {
       }
 
       const response = await fetch(
-        `https://ventify-backend.onrender.com/api/investors/forum/${id}/get-forum/`,
+        `https://ventify-backend.onrender.com/api/vcfirms/forum/get-forum/`,
         {
           headers: { Authorization: `Token ${accessToken}` },
         }
       );
-      setSelectedForum(id);
 
       if (response.ok) {
-        alert("done");
+        console.log("Done fetching forums");
       } else if (response.status === 401 && !isRefreshing) {
         console.log("Token expired — refreshing and retrying...");
         try {
           await refreshAccessToken();
-          await fetchForums(); // Retry after refresh
         } catch (refreshError) {
           console.error(
             "Failed to refresh token or retry fetch:",
@@ -249,39 +173,16 @@ const VcChat = () => {
     } catch (error) {
       console.error("Error fetching forums:", error);
     }
-  };
+  }, [isRefreshing, refreshAccessToken]);
 
-  if (selectedForum === null) {
-    return (
-      <div className="flex flex-col items-center w-full h-full p-4 bg-gray-100">
-        <h1 className="text-3xl font-bold mb-6">Select a Forum</h1>
-        <div className="flex flex-col gap-4 w-full max-w-md">
-          {forums.map((forum) => (
-            <button
-              key={forum.id}
-              onClick={() => handleForumClick(forum.id)}
-              className="bg-white shadow-md rounded-lg py-4 px-6 text-xl text-gray-800 border border-gray-200 hover:bg-gray-50"
-            >
-              {forum.title}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const selectedForumTitle = forums.find((f) => f.id === selectedForum)?.title;
+  useEffect(() => {
+    getForum();
+  }, [getForum, isRefreshing, refreshAccessToken]);
 
   return (
     <div className="flex flex-col items-center w-full h-full p-4 bg-gray-100">
       <div className="w-full flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">{selectedForumTitle}</h1>
-        <button
-          onClick={() => setSelectedForum(null)}
-          className="text-blue-600 hover:underline"
-        >
-          Back to Forums
-        </button>
+        <h1 className="text-2xl font-bold">Forum Title</h1>
       </div>
 
       {/* Input Bar */}

@@ -18,7 +18,7 @@ const Invites = () => {
   const [receipientType, setReceipientType] = useState("portfolio");
   const [expiresAt, setExpiresAt] = useState("");
   const [activeMainSection, setActiveMainSection] =
-    useState<string>("Sent Invites");
+    useState<string>("Received Invites");
 
   const refreshAccessToken = useCallback(async () => {
     const refresh_token = localStorage.getItem("refreshToken");
@@ -243,7 +243,7 @@ const Invites = () => {
     <div className="p-6">
       {/* Section Navigation */}
       <nav className="w-full flex gap-2 items-center justify-between py-2 px-4">
-        {["Sent Invites", "Received Invites"].map((section) => (
+        {["Received Invites", "Sent Invites"].map((section) => (
           <button
             key={section}
             className={`px-5 py-2 w-full border-[0.5px] border-gray-500 outline-none rounded-md text-center shadow-md ${
@@ -261,46 +261,51 @@ const Invites = () => {
         {activeMainSection === "Sent Invites" ? (
           sentInvites.length > 0 ? (
             <div className="overflow-x-auto mt-4">
-              <table className="w-full border-collapse border border-gray-300">
+              <table className="w-full border-collapse border border-gray-300 shadow-md rounded-lg">
                 <thead className="bg-gray-200">
                   <tr>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
-                      Recipient Email
+                    <th className="border border-gray-300 px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                      Company Name
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
-                      Recipient Type
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Date Sent
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
-                      Expires At
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-4 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-center"></th>
+                    <th className="border border-gray-300 px-4 py-2 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sentInvites.map((invite, index) => (
-                    <tr key={index} className="hover:bg-gray-100">
-                      <td className="border border-gray-300 px-4 py-2">
+                  {sentInvites.map((invite) => (
+                    <tr key={invite.id} className="hover:bg-gray-100">
+                      {/* Company Name */}
+                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-800">
                         {invite.email}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 capitalize">
-                        {invite.receipient_type}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2">
+
+                      {/* Date Sent */}
+                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-600">
                         {new Date(invite.created_at).toLocaleString()}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {new Date(invite.expires_at).toLocaleString()}
-                      </td>
-                      <td className="border border-gray-300 px-4 py-2 capitalize">
+
+                      {/* Status */}
+                      <td
+                        className={`border border-gray-300 px-4 py-2 text-sm font-medium capitalize ${
+                          invite.status === "accepted"
+                            ? "text-green-600"
+                            : invite.status === "declined"
+                            ? "text-red-600"
+                            : "text-yellow-500"
+                        }`}
+                      >
                         {invite.status}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
+
+                      {/* Revoke Button */}
+                      <td className="border border-gray-300 px-4 py-2 text-center">
                         {invite.status === "revoked" ? (
                           <span className="text-red-500 font-semibold">
                             Revoked
@@ -320,63 +325,69 @@ const Invites = () => {
               </table>
             </div>
           ) : (
-            <p className="mt-4">No sent invites found.</p>
+            <p className="mt-4 text-gray-500 text-center">
+              No sent invites found.
+            </p>
           )
         ) : (
           <div className="mt-4 space-y-4">
             {receivedInvites.length > 0 ? (
-              receivedInvites.map((invite) => (
-                <div
-                  key={invite.id}
-                  className="bg-white p-4 shadow-md rounded-lg border border-gray-300"
-                >
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    Invitation from {invite.email}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Sender:</span>{" "}
-                    {invite.receipient_type}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Date Received:</span>{" "}
-                    {new Date(invite.created_at).toLocaleString()}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Expires At:</span>{" "}
-                    {new Date(invite.expires_at).toLocaleString()}
-                  </p>
-                  <p
-                    className={`text-sm font-medium ${
-                      invite.status === "accepted"
-                        ? "text-green-600"
-                        : invite.status === "declined"
-                        ? "text-red-600"
-                        : "text-yellow-500"
-                    }`}
-                  >
-                    Status: {invite.status}
-                  </p>
+              <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <tbody>
+                  {receivedInvites.map((invite) => (
+                    <tr key={invite.id} className="border-b">
+                      {/* Company Name */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        {invite.email}
+                      </td>
 
-                  {invite.status === "pending" && (
-                    <div className="mt-4 flex gap-4">
-                      <button
-                        onClick={() => acceptInvite(invite.id)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                      {/* Date Received */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {new Date(invite.created_at).toLocaleString()}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {invite.status === "pending" ? (
+                          <div className="flex gap-2 justify-center">
+                            <button
+                              onClick={() => acceptInvite(invite.id)}
+                              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => declineInvite(invite.id)}
+                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition"
+                            >
+                              Decline
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td
+                        className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
+                          invite.status === "accepted"
+                            ? "text-green-600"
+                            : invite.status === "declined"
+                            ? "text-red-600"
+                            : "text-yellow-500"
+                        }`}
                       >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => declineInvite(invite.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition"
-                      >
-                        Decline
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))
+                        {invite.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
-              <p className="text-gray-600">No received invites found.</p>
+              <p className="text-gray-500 text-sm text-center py-4">
+                No received invites.
+              </p>
             )}
           </div>
         )}
@@ -392,15 +403,30 @@ const Invites = () => {
 
       {/* Modal for Creating Invite */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/70">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
+        <div
+          className="fixed w-[1000px] inset-0 flex items-center justify-center bg-black/70"
+          onClick={() => setShowModal(false)} // Close modal on background click
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+          >
             <h3 className="text-xl font-semibold mb-4">Create Invite</h3>
             <form onSubmit={generateInvite}>
+              <input
+                type="text"
+                value={newInviteEmail}
+                onChange={(e) => setNewInviteEmail(e.target.value)}
+                placeholder="Name/Business Name"
+                required
+                className="w-full p-2 border rounded mb-4"
+              />
+
               <input
                 type="email"
                 value={newInviteEmail}
                 onChange={(e) => setNewInviteEmail(e.target.value)}
-                placeholder="User's Email"
+                placeholder="Recepient Email"
                 required
                 className="w-full p-2 border rounded mb-4"
               />
@@ -423,6 +449,13 @@ const Invites = () => {
                 required
                 className="w-full p-2 border rounded mb-4"
               />
+
+              <textarea
+                placeholder="Add message"
+                className="w-full p-2 border rounded mb-4 resize-none placeholder:italic"
+                rows={4}
+                cols={50}
+              ></textarea>
 
               <div className="flex justify-end space-x-4">
                 <button

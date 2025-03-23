@@ -289,7 +289,7 @@ const Signup = () => {
 
               <div className="flex justify-between items-center mt-3">
                 <p>
-                  Already have a account?
+                  Already have a account?{" "}
                   <Link to={`/signin/${type}/`} className="underline">
                     Sign In
                   </Link>

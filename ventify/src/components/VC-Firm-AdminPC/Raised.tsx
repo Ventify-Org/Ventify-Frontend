@@ -142,6 +142,7 @@ const Raised: FC = () => {
                         handleRowChange(index, "amt_raised", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.amt_raised
@@ -156,6 +157,7 @@ const Raised: FC = () => {
                         handleRowChange(index, "day", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.day
@@ -170,6 +172,7 @@ const Raised: FC = () => {
                         handleRowChange(index, "investors", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.investors
@@ -184,6 +187,7 @@ const Raised: FC = () => {
                         handleRowChange(index, "dilution", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.dilution

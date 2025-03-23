@@ -143,6 +143,7 @@ const Report: FC = () => {
                         handleRowChange(index, "revenue", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.revenue
@@ -157,6 +158,7 @@ const Report: FC = () => {
                         handleRowChange(index, "update", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.update
@@ -171,6 +173,7 @@ const Report: FC = () => {
                         handleRowChange(index, "traction", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.traction
@@ -185,6 +188,7 @@ const Report: FC = () => {
                         handleRowChange(index, "kpi", e.target.value)
                       }
                       className="w-full bg-gray-100 border px-2 py-1"
+                      required
                     />
                   ) : (
                     row.kpi

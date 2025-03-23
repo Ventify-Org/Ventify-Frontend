@@ -10,7 +10,7 @@ import DashboardFirmIN from "./components/VC-Firm-In/Dashboard";
 import DashboardBusinessAdmin from "./components/Business-Admin/Dashboard";
 import DashboardBusinessIn from "./components/Business-Investor/Dashboard";
 import DashboardInvestorPC from "./components/Private-Investor-PC/Dashboard";
-import DashboardFirmAdminPC from "./components/VC-Firm-AdminPC/Dashboard";
+import DashboardFirmAdminIn from "./components/VC-Firm-AdminIn/Dashboard";
 
 const App = () => {
   return (
@@ -42,7 +42,7 @@ const App = () => {
           path="/dashboard/business/in"
           element={<DashboardBusinessIn />}
         />
-        <Route path="/test" element={<DashboardFirmAdminPC />} />
+        <Route path="/test" element={<DashboardFirmAdminIn />} />
       </Routes>
     </Router>
   );

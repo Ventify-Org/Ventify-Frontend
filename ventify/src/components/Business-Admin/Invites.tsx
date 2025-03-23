@@ -437,7 +437,6 @@ const Invites = () => {
                 required
                 className="w-full p-2 border rounded mb-4"
               >
-                <option value="portfolio">Portfolio Company</option>
                 <option value="investor">Investor</option>
               </select>
 

@@ -137,7 +137,7 @@ const Settings = () => {
           />
         ) : (
           <img
-            src="/resize.png"
+            src="resize.png"
             alt="Default Profile"
             className="w-full h-full object-cover"
           />

@@ -21,36 +21,87 @@ const Settings = () => {
       setError(null);
 
       try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-          throw new Error("No access token found");
-        }
+        let token = localStorage.getItem("access_token");
+        if (!token) throw new Error("No access token found");
 
-        const response = await fetch(
+        let response = await fetch(
           "https://ventify-backend.onrender.com/api/users/me",
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Token ${token}`,
               "Content-Type": "application/json",
+              Accept: "application/json", // ✅ Add Accept header
             },
           }
         );
 
+        // 🔥 If 401, try refreshing the token
+        if (response.status === 401) {
+          console.log("Access token expired, attempting to refresh...");
+          const refresh_token = localStorage.getItem("refreshToken");
+          if (!refresh_token) throw new Error("No refresh token available");
+
+          const refreshResponse = await fetch(
+            "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json", // ✅ Add Accept header
+              },
+              body: JSON.stringify({ refresh: refresh_token }),
+            }
+          );
+
+          if (!refreshResponse.ok) {
+            const refreshError = await refreshResponse.json();
+            console.error("Failed to refresh token:", refreshError);
+            throw new Error(refreshError?.detail || "Failed to refresh token");
+          }
+
+          const data = await refreshResponse.json();
+          token = data.access;
+
+          if (token) {
+            localStorage.setItem("access_token", token);
+            console.log("New access token saved");
+          } else {
+            throw new Error("New access token missing in response");
+          }
+
+          // 🔄 Retry with the new token
+          response = await fetch(
+            "https://ventify-backend.onrender.com/api/users/me",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Accept: "application/json", // ✅ Add Accept header
+              },
+            }
+          );
+        }
+
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Failed to fetch data: ${errorText}`);
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
 
         const data = await response.json();
 
-        if (data?.id) {
-          setUserData(data);
+        if (data?.success && data?.data?.id) {
+          setUserData(data.data); // ✅ Set data from `data.data`
           setLoggedIn(true);
         } else {
+          console.warn("User data invalid or missing:", data);
           setLoggedIn(false);
         }
       } catch (err) {
         if (err instanceof Error) {
+          console.error("Error fetching user data:", err.message);
           setError(err.message || "An error occurred");
         } else {
           setError("An unknown error occurred");
@@ -62,7 +113,7 @@ const Settings = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, []); // ✅ No dependency on refreshAccessToken needed
 
   if (loading) {
     return (
@@ -86,7 +137,7 @@ const Settings = () => {
           />
         ) : (
           <img
-            src="../src/assets/resize.png"
+            src="/resize.png"
             alt="Default Profile"
             className="w-full h-full object-cover"
           />
@@ -101,7 +152,7 @@ const Settings = () => {
             <div className="flex w-[70%] items-center gap-4">
               <label className="w-32 text-left">Name</label>
               <input
-                className="w-full px-3 py-2 rounded-md border border-black"
+                className="w-full px-3 py-2 rounded-md text-gray-400 italic border border-black"
                 value={userData?.name || ""}
                 disabled
               />
@@ -111,7 +162,7 @@ const Settings = () => {
             <div className="flex w-[70%] items-center gap-4">
               <label className="w-32 text-left">Username</label>
               <input
-                className="w-full px-3 py-2 rounded-md border border-black"
+                className="w-full px-3 py-2 rounded-md text-gray-400 italic border border-black"
                 value={userData?.name || ""}
                 disabled
               />
@@ -121,7 +172,7 @@ const Settings = () => {
             <div className="flex w-[70%] items-center gap-4">
               <label className="w-32 text-left">Email</label>
               <input
-                className="w-full px-3 py-2 rounded-md border border-black"
+                className="w-full px-3 py-2 text-gray-400 italic rounded-md border border-black"
                 value={userData?.email || ""}
                 disabled
               />
@@ -131,7 +182,7 @@ const Settings = () => {
             <div className="flex w-[70%] items-center gap-4">
               <label className="w-32 text-left">Phone</label>
               <input
-                className="w-full px-3 py-2 rounded-md border border-black"
+                className="w-full px-3 py-2 rounded-md text-gray-400 italic border border-black"
                 value={userData?.phone || ""}
                 disabled
               />

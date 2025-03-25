@@ -144,11 +144,9 @@ const Signup = () => {
       console.log("Full Response:", responseData);
 
       if (!response.ok) {
-        // Check if the backend sends a specific error message
         const errorMessage =
           responseData.message || "Signup failed. Please check your inputs.";
 
-        // Display the error in a user-friendly way
         if (errorMessage.includes("Email already exists")) {
           alert(
             "This email is already registered. Please use a different email or try logging in."
@@ -159,6 +157,14 @@ const Signup = () => {
         return;
       }
 
+      // ✅ Save tokens to local storage if returned
+      if (responseData.access && responseData.refresh) {
+        localStorage.setItem("access_token", responseData.access);
+        localStorage.setItem("refreshToken", responseData.refresh);
+        console.log("Tokens saved to localStorage");
+      }
+
+      // ✅ Navigate to dashboard after signup
       navigate(`/dashboard/${type}/admin`);
     } catch (error) {
       console.error("Error submitting signup:", error);

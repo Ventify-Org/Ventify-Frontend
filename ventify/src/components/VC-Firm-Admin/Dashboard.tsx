@@ -87,7 +87,7 @@ const DashboardFirmAdmin = () => {
 
           {/* Profile Section */}
           <div className="w-20 h-20 rounded-full bg-green-400 mb-2">
-            <img src="/../src/assets/resize.png" alt="profile pic" />
+            <img src="/resize.png" alt="profile pic" />
           </div>
           <p>James Gordon</p>
           <p>Microsoft</p>

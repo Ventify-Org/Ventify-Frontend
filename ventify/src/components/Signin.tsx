@@ -46,12 +46,12 @@ const Signin = () => {
         const account_type = data.data.user.account_type;
         console.log("Account Type:", account_type);
 
-        // Store tokens
+        // ✅ Store tokens consistently
         const refreshToken = data.data.refresh_token;
         const accessToken = data.data.access_token;
         if (refreshToken && accessToken) {
           localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("authToken", accessToken);
+          localStorage.setItem("access_token", accessToken); // 🔥 Consistent key here
         } else {
           console.error("Tokens are missing in the response.");
           alert("Failed to retrieve tokens. Please try again.");
@@ -59,8 +59,7 @@ const Signin = () => {
           return;
         }
 
-        // Set the account type in state
-        // Route based on account_type from backend
+        // ✅ Route based on account_type from backend
         if (account_type === "vcfirm") {
           navigate("/dashboard/vc-firm/admin");
         } else if (account_type === "investor") {
@@ -78,7 +77,7 @@ const Signin = () => {
       console.error("Error during login:", error);
       alert("An error occurred. Please try again later.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -100,7 +99,7 @@ const Signin = () => {
             </div>
 
             <p className="mt-auto pb-10">
-              Don't have an account? {" "}
+              Don't have an account?{" "}
               <Link
                 className="text-yellow-500 hover:underline"
                 to={`/signup/${type}/`}

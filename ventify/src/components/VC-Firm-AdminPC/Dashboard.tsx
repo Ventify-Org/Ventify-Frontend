@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Messages from "./Messages";
 import { useNavigate } from "react-router-dom";
-import { BiLogOut } from "react-icons/bi";
+import { BiCog, BiLogOut } from "react-icons/bi";
 import Report from "./Report";
 import Raised from "./Raised";
 
@@ -61,8 +61,18 @@ const DashboardFirmAdminPC = () => {
 
         <div className="flex gap-4 flex-grow min-h-screen">
           {/* Sidebar */}
-          <div className="w-[15%] bg-[#00378B] text-white flex flex-col items-center py-4 min-h-screen">
-            <div className="w-20 h-20 rounded-full bg-green-400"></div>
+          <div className="relative w-[15%] bg-[#00378B] text-white flex flex-col items-center py-10 min-h-screen">
+            {/* Settings Icon (Top Right Corner) */}
+            <BiCog
+              className="absolute top-6 right-6 text-white bg-[#00378B] p-1 rounded-full cursor-pointer hover:bg-yellow-400 transition"
+              size={26}
+              onClick={() => {
+                navigate("/settings");
+              }}
+            />
+            <div className="w-20 h-20 rounded-full bg-green-400">
+              <img src="/../src/assets/resize.png" alt="profile pic" />
+            </div>
             <p>James Gordon</p>
             <p>Microsoft</p>
 

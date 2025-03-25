@@ -72,7 +72,7 @@ const DashboardInvestor = () => {
               }}
             />
             <div className="w-20 h-20 rounded-full bg-green-400">
-              <img src="resize.png" alt="profile pic" />
+              <img src="/resize.png" alt="profile pic" />
             </div>
             <p>James Gordon</p>
             <p>Microsoft</p>

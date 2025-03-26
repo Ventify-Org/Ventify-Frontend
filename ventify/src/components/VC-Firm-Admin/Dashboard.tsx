@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardMenu from "./Dashboard-Menu";
 import Messages from "./Messages";
 import Raisings from "./Raisings";
@@ -10,10 +10,24 @@ import { useNavigate } from "react-router-dom";
 import { BiLogOut, BiCog } from "react-icons/bi";
 import Invites from "./Invites";
 
+interface UserData {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  profile_picture: string;
+}
+
 const DashboardFirmAdmin = () => {
   const [activeSection, setActiveSection] = useState<string>("Dashboard");
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const [userData, setUserData] = useState<UserData | null>(null);
+  //const [loggedIn, setLoggedIn] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  console.log(error);
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
@@ -31,6 +45,114 @@ const DashboardFirmAdmin = () => {
     "Portfolio T. No": <InvestorT />,
     Invites: <Invites />,
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        let token = localStorage.getItem("access_token");
+        if (!token) throw new Error("No access token found");
+
+        let response = await fetch(
+          "https://ventify-backend.onrender.com/api/users/me",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Token ${token}`,
+              "Content-Type": "application/json",
+              Accept: "application/json", // ✅ Add Accept header
+            },
+          }
+        );
+
+        // 🔥 If 401, try refreshing the token
+        if (response.status === 401) {
+          console.log("Access token expired, attempting to refresh...");
+          const refresh_token = localStorage.getItem("refreshToken");
+          if (!refresh_token) throw new Error("No refresh token available");
+
+          const refreshResponse = await fetch(
+            "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json", // ✅ Add Accept header
+              },
+              body: JSON.stringify({ refresh: refresh_token }),
+            }
+          );
+
+          if (!refreshResponse.ok) {
+            const refreshError = await refreshResponse.json();
+            console.error("Failed to refresh token:", refreshError);
+            throw new Error(refreshError?.detail || "Failed to refresh token");
+          }
+
+          const data = await refreshResponse.json();
+          token = data.access;
+
+          if (token) {
+            localStorage.setItem("access_token", token);
+            console.log("New access token saved");
+          } else {
+            throw new Error("New access token missing in response");
+          }
+
+          // 🔄 Retry with the new token
+          response = await fetch(
+            "https://ventify-backend.onrender.com/api/users/me",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Accept: "application/json", // ✅ Add Accept header
+              },
+            }
+          );
+        }
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Failed to fetch data: ${errorText}`);
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data?.success && data?.data?.id) {
+          setUserData(data.data); // ✅ Set data from `data.data`
+          //setLoggedIn(true);
+        } else {
+          console.warn("User data invalid or missing:", data);
+          //setLoggedIn(false);
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Error fetching user data:", err.message);
+          setError(err.message || "An error occurred");
+        } else {
+          setError("An unknown error occurred");
+        }
+        //setLoggedIn(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []); // ✅ No dependency on refreshAccessToken needed
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   const logOut = async () => {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -75,7 +197,7 @@ const DashboardFirmAdmin = () => {
 
       <div className="flex gap-4 flex-grow min-h-screen">
         {/* Sidebar */}
-        <div className="relative w-[15%] bg-[#00378B] text-white flex flex-col items-center py-10 min-h-screen">
+        <div className="relative w-[16%] bg-[#00378B] text-white flex flex-col items-center py-10 min-h-screen">
           {/* Settings Icon (Top Right Corner) */}
           <BiCog
             className="absolute top-6 right-6 text-white bg-[#00378B] p-1 rounded-full cursor-pointer hover:bg-yellow-400 transition"
@@ -89,8 +211,8 @@ const DashboardFirmAdmin = () => {
           <div className="w-20 h-20 rounded-full bg-green-400 mb-2">
             <img src="/resize.png" alt="profile pic" />
           </div>
-          <p>James Gordon</p>
-          <p>Microsoft</p>
+          <p>{userData?.name || ""}</p>
+          <p>{userData?.email || ""}</p>
 
           {/* Navigation */}
           <nav className="mt-4 w-full flex flex-col gap-2">

@@ -92,6 +92,28 @@ const AllRaised = () => {
     setIsSaved(false);
   };
 
+  const handleSave = (): void => {
+    if (newRaised) {
+      setRaisedTable((prev) => [
+        ...prev.map((row) => ({
+          ...row,
+          isEditable: false,
+        })),
+        { ...newRaised, isEditable: false },
+      ]);
+      setNewRaised(null);
+      setIsSaved(true);
+    } else {
+      // If no new row, just set existing rows to non-editable
+      setRaisedTable((prev) =>
+        prev.map((row) => ({
+          ...row,
+          isEditable: false,
+        }))
+      );
+    }
+  };
+
   const handleInputChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -276,14 +298,17 @@ const AllRaised = () => {
       </table>
 
       <div className="flex mt-8 justify-end gap-5">
-        <button className="px-3 border rounded-md hover:text-white hover:bg-black">
-          Edit
-        </button>
         <button
           className="px-3 border rounded-md hover:text-white hover:bg-black"
           onClick={handleAddClick}
         >
-          New
+          Add
+        </button>
+        <button
+          className="px-3 border rounded-md hover:text-white hover:bg-black"
+          onClick={handleSave}
+        >
+          Save
         </button>
       </div>
     </div>

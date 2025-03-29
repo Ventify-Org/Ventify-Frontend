@@ -1,3 +1,4 @@
+import { FaCamera } from "react-icons/fa"
 import { useEffect, useState } from "react";
 
 interface UserData {
@@ -13,6 +14,7 @@ const Settings = () => {
   const [loggedIn, setLoggedIn] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
   console.log(error);
 
   useEffect(() => {
@@ -113,7 +115,84 @@ const Settings = () => {
     };
 
     fetchUserData();
-  }, []); // ✅ No dependency on refreshAccessToken needed
+  }, []);
+
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      console.warn("No file selected");
+      return;
+    }
+  
+    console.log("Uploading started...");
+    setUploading(true);
+  
+    const formData = new FormData();
+    formData.append("profile_picture", file);
+  
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) throw new Error("No access token found");
+  
+      console.log("Sending request to backend...");
+  
+      const response = await fetch(
+        "https://ventify-backend.onrender.com/api/users/upload-profile-image/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+            Accept: "application/json",
+          },
+          body: formData,
+        }
+      );
+  
+      console.log("Response received, processing...");
+      const result = await response.json();
+  
+      if (!response.ok) {
+        console.error("Upload failed:", result);
+        throw new Error(result.detail || "Failed to upload profile picture");
+      }
+  
+      console.log("Upload successful!", result);
+  
+      // 🔄 **Fetch latest user data from backend to update UI properly**
+      const userResponse = await fetch(
+        "https://ventify-backend.onrender.com/api/users/me",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Token ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+  
+      const userData = await userResponse.json();
+  
+      if (userResponse.ok && userData.data) {
+        setUserData(userData.data);
+      } else {
+        console.warn("Failed to refresh user data:", userData);
+      }
+    } catch (err) {
+      console.error("Error occurred:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setUploading(false);
+      console.log("Uploading finished.");
+    }
+  };
+  
+  
+  
 
   if (loading) {
     return (
@@ -128,21 +207,36 @@ const Settings = () => {
       <p className="text-3xl pb-5">Settings</p>
 
       {/* Profile Picture */}
-      <div className="bg-green-500 rounded-full w-40 h-40 mx-auto overflow-hidden">
-        {userData?.profile_picture ? (
+      <div className="relative w-40 h-40">
+        <div className="bg-green-500 rounded-full w-full h-full overflow-hidden">
           <img
-            src={userData.profile_picture}
+            src={userData?.profile_picture || "/resize.png"}
             alt="Profile"
             className="w-full h-full object-cover"
           />
-        ) : (
-          <img
-            src="/resize.png"
-            alt="Default Profile"
-            className="w-full h-full object-cover"
+        </div>
+
+        {/* Upload Button */}
+        <label htmlFor="fileInput">
+          <FaCamera
+            className={`absolute bottom-2 right-2 text-white bg-gray-800 p-2 rounded-full cursor-pointer text-3xl ${
+              uploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           />
-        )}
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
+        </label>
       </div>
+
+      {/* Uploading Indicator */}
+      {uploading && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+
 
       {/* Form Fields or Not Logged In */}
       <div className="w-[100%] gap-4 flex flex-col mt-8 px-8">

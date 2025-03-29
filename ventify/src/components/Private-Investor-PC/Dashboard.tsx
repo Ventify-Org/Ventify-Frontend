@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Messages from "./Messages";
 import Report from "./Report";
 import Raised from "./Raised";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiCog, BiLogOut } from "react-icons/bi";
 
 interface UserData {
@@ -177,7 +177,9 @@ const DashboardInvestorPC = () => {
     <>
       <section className="flex flex-col min-h-screen">
         <div className="border-b-[1.5px] flex items-center justify-center py-1">
-          <img src="/logo.png" />
+          <Link to="/">
+            <img src="/logo.png" alt="logo" />
+          </Link>
         </div>
 
         <div className="flex gap-4 flex-grow min-h-screen">

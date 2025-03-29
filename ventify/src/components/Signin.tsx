@@ -49,9 +49,10 @@ const Signin = () => {
         // ✅ Store tokens consistently
         const refreshToken = data.data.refresh_token;
         const accessToken = data.data.access_token;
+
         if (refreshToken && accessToken) {
           localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("access_token", accessToken); // 🔥 Consistent key here
+          localStorage.setItem("access_token", accessToken);
         } else {
           console.error("Tokens are missing in the response.");
           alert("Failed to retrieve tokens. Please try again.");

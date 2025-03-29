@@ -45,12 +45,7 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState("");
 
   // Sample Companies with IDs
-  const companies = [
-    { id: 1, name: "Company A" },
-    { id: 2, name: "Company B" },
-    { id: 3, name: "Company C" },
-    { id: 4, name: "Company D" },
-  ];
+  const companies = [{ id: 1, name: "Company A" }];
 
   // Fetch messages when a company is selected
   useEffect(() => {

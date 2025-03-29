@@ -18,33 +18,6 @@ const InvestorT = () => {
       ROI: "10%",
       tracking_ID: "123456",
     },
-    {
-      id: 3,
-      name: "Alice Brown",
-      country: "Mexico",
-      investment: "$10,000",
-      portfolio: "$5,000",
-      ROI: "10%",
-      tracking_ID: "123456",
-    },
-    {
-      id: 4,
-      name: "Bob White",
-      country: "Peru",
-      investment: "$10,000",
-      portfolio: "$5,000",
-      ROI: "10%",
-      tracking_ID: "123456",
-    },
-    {
-      id: 5,
-      name: "Alex Green",
-      country: "Nigeria",
-      investment: "$10,000",
-      portfolio: "$5,000",
-      ROI: "10%",
-      tracking_ID: "123456",
-    },
   ];
 
   return (

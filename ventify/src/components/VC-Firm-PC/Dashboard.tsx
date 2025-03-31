@@ -192,8 +192,12 @@ const DashboardFirmPC = () => {
                 navigate("/settings");
               }}
             />
-            <div className="w-20 h-20 rounded-full bg-green-400">
-              <img src="/resize.png" alt="profile pic" />
+            <div className="w-20 h-20 rounded-full bg-green-400 mb-2 overflow-hidden">
+              <img
+                src={userData?.profile_picture || "/resize.png"}
+                alt="profile pic"
+                className="w-full h-full object-cover"
+              />
             </div>
             <p>{userData?.name || ""}</p>
             <p>{userData?.email || ""}</p>

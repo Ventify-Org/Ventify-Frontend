@@ -11,7 +11,7 @@ import DashboardBusinessAdmin from "./components/Business-Admin/Dashboard";
 import DashboardBusinessIn from "./components/Business-Investor/Dashboard";
 import DashboardInvestorPC from "./components/Private-Investor-PC/Dashboard";
 import DashboardFirmAdminIn from "./components/VC-Firm-AdminIn/Dashboard";
-import Settings from "./components/Settings"
+import Settings from "./components/Settings";
 
 const App = () => {
   return (

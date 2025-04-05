@@ -45,12 +45,7 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState("");
 
   // Sample Companies with IDs
-  const companies = [
-    { id: 1, name: "Company A" },
-    { id: 2, name: "Company B" },
-    { id: 3, name: "Company C" },
-    { id: 4, name: "Company D" },
-  ];
+  const companies = [{ id: 1, name: "Company A" }];
 
   // Fetch messages when a company is selected
   useEffect(() => {
@@ -221,11 +216,11 @@ const Messages = () => {
         // Company List
         <div>
           <h1 className="text-3xl font-bold">Messages</h1>
-          <div className="flex flex-col items-center h-full">
+          <div className="flex flex-col justify-center items-center h-full">
             {companies.map((company) => (
               <div
                 key={company.id}
-                className="border-b-[1px] border-slate-400 flex py-3 gap-4 items-center w-[70%] px-10 cursor-pointer"
+                className="shadow-lg flex py-3 gap-8 text-xl  items-center w-[70%] px-10 cursor-pointer"
                 onClick={() => setSelectedCompany(company)}
               >
                 <div className="bg-red-500 w-15 h-15 rounded-full"></div>

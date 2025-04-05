@@ -185,10 +185,10 @@ const DashboardInvestor = () => {
 
         <div className="flex gap-4 flex-grow min-h-screen">
           {/* Sidebar */}
-          <div className="relative w-[15%] bg-[#00378B] text-white flex flex-col items-center py-10 min-h-screen">
+          <div className="relative w-[15%] bg-[#4D4D4D] text-white flex flex-col items-center py-10 min-h-screen">
             {/* Settings Icon (Top Right Corner) */}
             <BiCog
-              className="absolute top-6 right-6 text-white bg-[#00378B] p-1 rounded-full cursor-pointer hover:bg-yellow-400 transition"
+              className="absolute top-6 right-6 text-white bg-[#4D4D4D] p-1 rounded-full cursor-pointer hover:bg-yellow-400 transition"
               size={26}
               onClick={() => {
                 navigate("/settings");

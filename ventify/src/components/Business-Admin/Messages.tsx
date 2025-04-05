@@ -72,19 +72,17 @@ const Messages = () => {
         // Company List
         <div>
           <h1 className="text-3xl font-bold">Messages</h1>
-          <div className="flex flex-col items-center h-full">
-            {["Company A", "Company B", "Company C", "Company D"].map(
-              (company) => (
-                <div
-                  key={company}
-                  className="border-b-[1px] border-slate-400 flex py-3 gap-4 items-center w-[70%] px-10 cursor-pointer"
-                  onClick={() => setSelectedCompany(company)}
-                >
-                  <div className="bg-red-500 w-15 h-15 rounded-full"></div>
-                  <p>{company}</p>
-                </div>
-              )
-            )}
+          <div className="flex flex-col justify-center items-center h-full">
+            {["Company A"].map((company) => (
+              <div
+                key={company}
+                className="shadow-lg flex py-3 gap-4 items-center w-[70%] px-10 cursor-pointer"
+                onClick={() => setSelectedCompany(company)}
+              >
+                <div className="bg-red-500 w-15 h-15 rounded-full"></div>
+                <p>{company}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}

@@ -183,8 +183,6 @@ const Settings = () => {
 
       if (!response.ok) throw new Error("Failed to remove profile picture");
 
-      // Reset to default image
-      //setUserData({ profile_picture: "/resize.png" });
       setUserData((prev) =>
         prev ? { ...prev, profile_picture: "/resize.png" } : null
       );
@@ -212,15 +210,12 @@ const Settings = () => {
       </div>
       <div className="flex flex-col w-[80%] mx-auto items-center my-10 py-10 shadow-lg">
         <div className="relative w-full flex justify-center items-center px-8 mb-5">
-          {/* 🔙 Back Button - Positioned to the Left */}
           <button
             onClick={() => navigate(-1)}
             className="absolute left-8 text-gray-700 hover:text-black text-lg"
           >
             ← Back
           </button>
-
-          {/* 🛠 Settings Title - Centered */}
           <p className="text-3xl">Settings</p>
         </div>
 

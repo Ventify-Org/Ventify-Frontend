@@ -3,13 +3,12 @@ import Invested from "./Invested";
 import Pipeline from "./Pipeline";
 
 const Investments = () => {
-  const [activeMainSection, setActiveMainSection] = useState<string>(
-    "Portfolio Companies"
-  );
+  const [activeMainSection, setActiveMainSection] =
+    useState<string>("Invested");
 
   const sections: Record<string, JSX.Element> = {
-    "Portfolio Companies": <Invested />,
-    Investors: <Pipeline />,
+    Invested: <Invested />,
+    Pipeline: <Pipeline />,
   };
 
   return (

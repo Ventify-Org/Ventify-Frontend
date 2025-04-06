@@ -46,7 +46,7 @@ const Upload = () => {
           {buttonData.slice(startIndex, startIndex + 2).map((btn) => (
             <button
               key={btn.title}
-              className="mx-1 w-[180px] py-2 text-black font-semibold rounded"
+              className="mx-1 w-[220px] py-2 text-black font-semibold rounded"
               style={{ backgroundColor: btn.color }}
               onClick={() => handleClick(btn.title)}
             >

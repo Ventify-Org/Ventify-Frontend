@@ -51,8 +51,8 @@ const Signin = () => {
         const accessToken = data.data.access_token;
 
         if (refreshToken && accessToken) {
-          localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("access_token", accessToken);
+          sessionStorage.setItem("refreshToken", refreshToken);
+          sessionStorage.setItem("access_token", accessToken);
         } else {
           console.error("Tokens are missing in the response.");
           alert("Failed to retrieve tokens. Please try again.");

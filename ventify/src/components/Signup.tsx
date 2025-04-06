@@ -124,6 +124,48 @@ const Signup = () => {
     }
   };
 
+  // Automatic login function after successful signup
+  const autoLogin = async (email: string, password: string) => {
+    const loginUrl = "https://ventify-backend.onrender.com/api/auth/login/";
+    try {
+      const loginResponse = await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const loginData = await loginResponse.json();
+
+      if (!loginResponse.ok) {
+        console.error("Auto-login failed:", loginData);
+        // Still navigate to dashboard since signup was successful
+        navigate(`/dashboard/${type}/admin`);
+        return;
+      }
+
+      // Save tokens from login response
+      if (loginData.access && loginData.refresh) {
+        sessionStorage.setItem("access_token", loginData.access);
+        sessionStorage.setItem("refreshToken", loginData.refresh);
+        console.log("Login successful, tokens updated");
+
+        // Store user info if available
+        if (loginData.user) {
+          sessionStorage.setItem("user", JSON.stringify(loginData.user));
+        }
+
+        // Navigate to dashboard after successful login
+        navigate(`/dashboard/${type}/admin`);
+      }
+    } catch (error) {
+      console.error("Error during auto-login:", error);
+      // Still navigate to dashboard since signup was successful
+      navigate(`/dashboard/${type}/admin`);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -154,18 +196,28 @@ const Signup = () => {
         } else {
           alert(errorMessage);
         }
+        setIsLoading(false);
         return;
       }
 
-      // ✅ Save tokens to local storage if returned
+      // Save tokens if returned from signup
       if (responseData.access && responseData.refresh) {
-        localStorage.setItem("access_token", responseData.access);
-        localStorage.setItem("refreshToken", responseData.refresh);
-        console.log("Tokens saved to localStorage");
-      }
+        sessionStorage.setItem("access_token", responseData.access);
+        sessionStorage.setItem("refreshToken", responseData.refresh);
+        console.log("Tokens saved to sessionStorage");
 
-      // ✅ Navigate to dashboard after signup
-      navigate(`/dashboard/${type}/admin`);
+        // Store user info if available
+        if (responseData.user) {
+          sessionStorage.setItem("user", JSON.stringify(responseData.user));
+        }
+
+        // Navigate to dashboard after signup
+        navigate(`/dashboard/${type}/admin`);
+      } else {
+        // If tokens are not provided in signup response, perform auto-login
+        console.log("No tokens in signup response, performing auto-login");
+        await autoLogin(formData.email, formData.password);
+      }
     } catch (error) {
       console.error("Error submitting signup:", error);
       alert("An unexpected error occurred. Please try again later.");
@@ -303,8 +355,9 @@ const Signup = () => {
                 <button
                   type="submit"
                   className="w-1/2 bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition"
+                  disabled={isLoading}
                 >
-                  Sign Up
+                  {isLoading ? "Processing..." : "Sign Up"}
                 </button>
               </div>
             </form>

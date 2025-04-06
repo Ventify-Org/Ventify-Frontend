@@ -18,7 +18,7 @@ const AllRaised = () => {
   const [isSaved, setIsSaved] = useState(false);
 
   const refreshAccessToken = useCallback(async () => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -40,7 +40,7 @@ const AllRaised = () => {
 
     const data: { access: string } = await response.json();
     const newAccessToken = data.access;
-    localStorage.setItem("authToken", newAccessToken);
+    sessionStorage.setItem("authToken", newAccessToken);
     return newAccessToken;
   }, []);
 

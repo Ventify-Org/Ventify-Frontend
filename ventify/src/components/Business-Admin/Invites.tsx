@@ -21,7 +21,7 @@ const Invites = () => {
     useState<string>("Received Invites");
 
   const refreshAccessToken = useCallback(async () => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -40,7 +40,7 @@ const Invites = () => {
     }
 
     const data: { access: string } = await response.json();
-    localStorage.setItem("authToken", data.access);
+    sessionStorage.setItem("authToken", data.access);
     return data.access;
   }, []);
 

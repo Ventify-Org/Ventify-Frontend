@@ -26,7 +26,8 @@ const Settings = () => {
       setError(null);
 
       try {
-        let token = localStorage.getItem("access_token");
+        // Use sessionStorage instead of localStorage
+        let token = sessionStorage.getItem("access_token");
         if (!token) throw new Error("No access token found");
 
         let response = await fetch(
@@ -36,15 +37,15 @@ const Settings = () => {
             headers: {
               Authorization: `Token ${token}`,
               "Content-Type": "application/json",
-              Accept: "application/json", // ✅ Add Accept header
+              Accept: "application/json",
             },
           }
         );
 
-        // 🔥 If 401, try refreshing the token
+        // If 401, try refreshing the token
         if (response.status === 401) {
           console.log("Access token expired, attempting to refresh...");
-          const refresh_token = localStorage.getItem("refreshToken");
+          const refresh_token = sessionStorage.getItem("refreshToken");
           if (!refresh_token) throw new Error("No refresh token available");
 
           const refreshResponse = await fetch(
@@ -53,7 +54,7 @@ const Settings = () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Accept: "application/json", // ✅ Add Accept header
+                Accept: "application/json",
               },
               body: JSON.stringify({ refresh: refresh_token }),
             }
@@ -69,13 +70,13 @@ const Settings = () => {
           token = data.access;
 
           if (token) {
-            localStorage.setItem("access_token", token);
+            sessionStorage.setItem("access_token", token);
             console.log("New access token saved");
           } else {
             throw new Error("New access token missing in response");
           }
 
-          // 🔄 Retry with the new token
+          // Retry with the new token
           response = await fetch(
             "https://ventify-backend.onrender.com/api/users/me",
             {
@@ -83,7 +84,7 @@ const Settings = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
-                Accept: "application/json", // ✅ Add Accept header
+                Accept: "application/json",
               },
             }
           );
@@ -98,7 +99,7 @@ const Settings = () => {
         const data = await response.json();
 
         if (data?.success && data?.data?.id) {
-          setUserData(data.data); // ✅ Set data from `data.data`
+          setUserData(data.data);
           setLoggedIn(true);
         } else {
           console.warn("User data invalid or missing:", data);
@@ -131,7 +132,7 @@ const Settings = () => {
     formData.append("profile_picture", file);
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = sessionStorage.getItem("access_token");
       if (!token) throw new Error("No access token found");
 
       const response = await fetch(
@@ -146,7 +147,7 @@ const Settings = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.detail || "Failed to upload");
 
-      // 🔄 Fetch updated user data
+      // Fetch updated user data
       const userResponse = await fetch(
         "https://ventify-backend.onrender.com/api/users/me",
         {
@@ -170,7 +171,7 @@ const Settings = () => {
 
   const removeProfilePicture = async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = sessionStorage.getItem("access_token");
       if (!token) throw new Error("No access token found");
 
       const response = await fetch(

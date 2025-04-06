@@ -57,7 +57,7 @@ const Subsection = ({
 
   const fetchCompanyDetails = async (id: number) => {
     try {
-      const token = localStorage.getItem("authToken");
+      const token = sessionStorage.getItem("authToken");
       if (!token) {
         alert("No authentication token found. Please log in.");
         return;

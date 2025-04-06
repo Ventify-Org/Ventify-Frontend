@@ -30,7 +30,7 @@ const Applications = () => {
 
   // Function to refresh the access token
   const refreshAccessToken = useCallback(async (): Promise<string> => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -53,7 +53,7 @@ const Applications = () => {
 
     const data: TokenResponse = await response.json();
     console.log("Refreshed token successfully");
-    localStorage.setItem("authToken", data.access);
+    sessionStorage.setItem("authToken", data.access);
     return data.access;
   }, []);
 

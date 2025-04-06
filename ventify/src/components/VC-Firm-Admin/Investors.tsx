@@ -20,7 +20,7 @@ const Investors = () => {
 
   // Function to refresh access token
   const refreshAccessToken = useCallback(async () => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -42,7 +42,7 @@ const Investors = () => {
     }
 
     const data: { access: string } = await response.json();
-    localStorage.setItem("authToken", data.access);
+    sessionStorage.setItem("authToken", data.access);
     console.log("Token refreshed successfully");
     return data.access;
   }, []);
@@ -92,7 +92,7 @@ const Investors = () => {
     const fetchInvestorApplications = async () => {
       setLoading(true);
       try {
-        const access_token = localStorage.getItem("authToken");
+        const access_token = sessionStorage.getItem("authToken");
         if (access_token) {
           await getInvestorApplications(access_token);
         } else {
@@ -198,7 +198,7 @@ const Investors = () => {
                 };
 
                 try {
-                  const token = localStorage.getItem("authToken");
+                  const token = sessionStorage.getItem("authToken");
                   if (!token) {
                     alert("No authentication token found. Please log in.");
                     return;

@@ -3,7 +3,7 @@ import { BiArrowFromRight, BiMicrophone, BiSend } from "react-icons/bi";
 
 // Refresh access token
 const refreshAccessToken = async () => {
-  const refresh_token = localStorage.getItem("refreshToken");
+  const refresh_token = sessionStorage.getItem("refreshToken");
   if (!refresh_token) {
     throw new Error("No refresh token available");
   }
@@ -28,7 +28,7 @@ const refreshAccessToken = async () => {
   console.log("Refreshed token successfully");
   const newAccessToken = data.access;
   console.log("New access token: ", newAccessToken);
-  localStorage.setItem("authToken", newAccessToken);
+  sessionStorage.setItem("authToken", newAccessToken);
   return newAccessToken;
 };
 
@@ -57,7 +57,7 @@ const Messages = () => {
     const fetchMessages = async () => {
       if (selectedCompany) {
         try {
-          const token = localStorage.getItem("authToken");
+          const token = sessionStorage.getItem("authToken");
           const response = await fetch(
             `https://ventify-backend.onrender.com/api/messages/get-messages?user=${selectedCompany.id}`,
             {
@@ -107,7 +107,7 @@ const Messages = () => {
       };
 
       try {
-        const token = localStorage.getItem("authToken");
+        const token = sessionStorage.getItem("authToken");
         const response = await fetch(
           "https://ventify-backend.onrender.com/api/messages/send-message/",
           {

@@ -25,7 +25,7 @@ const VcChat = () => {
   const [newMessage, setNewMessage] = useState("");
 
   const refreshAccessToken = async () => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -51,13 +51,13 @@ const VcChat = () => {
     console.log("Token refreshed successfully");
 
     const newAccessToken = data.access;
-    localStorage.setItem("authToken", newAccessToken);
+    sessionStorage.setItem("authToken", newAccessToken);
     return newAccessToken;
   };
 
   const fetchWithAuth = useCallback(
     async (url: string, options: RequestInit = {}) => {
-      let token = localStorage.getItem("authToken");
+      let token = sessionStorage.getItem("authToken");
 
       if (!token) {
         token = await refreshAccessToken();
@@ -247,12 +247,12 @@ export default VcChat;
 
  /*const fetchForums = useCallback(async () => {
     try {
-      let accessToken = localStorage.getItem("authToken");
+      let accessToken = sessionStorage.getItem("authToken");
 
       if (!accessToken) {
         try {
           if (!isRefreshing) await refreshAccessToken();
-          accessToken = localStorage.getItem("authToken");
+          accessToken = sessionStorage.getItem("authToken");
         } catch (refreshError) {
           console.error(
             "Failed to refresh token before fetching forums:",

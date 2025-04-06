@@ -52,7 +52,7 @@ const DashboardFirmAdmin = () => {
       setError(null);
 
       try {
-        let token = localStorage.getItem("access_token");
+        let token = sessionStorage.getItem("access_token");
         if (!token) throw new Error("No access token found");
 
         let response = await fetch(
@@ -69,7 +69,7 @@ const DashboardFirmAdmin = () => {
 
         if (response.status === 401) {
           console.log("Access token expired, attempting to refresh...");
-          const refresh_token = localStorage.getItem("refreshToken");
+          const refresh_token = sessionStorage.getItem("refreshToken");
           if (!refresh_token) throw new Error("No refresh token available");
 
           const refreshResponse = await fetch(
@@ -94,7 +94,7 @@ const DashboardFirmAdmin = () => {
           token = data.access;
 
           if (token) {
-            localStorage.setItem("access_token", token);
+            sessionStorage.setItem("access_token", token);
             console.log("New access token saved");
           } else {
             throw new Error("New access token missing in response");
@@ -154,10 +154,10 @@ const DashboardFirmAdmin = () => {
   }
 
   const logOut = async () => {
-    const refreshToken = localStorage.getItem("refresh_token");
+    const refreshToken = sessionStorage.getItem("refresh_token");
 
     if (!refreshToken) {
-      console.error("Refresh token not found in localStorage");
+      console.error("Refresh token not found in sessionStorage");
       navigate("/");
       return;
     }
@@ -175,7 +175,7 @@ const DashboardFirmAdmin = () => {
       );
 
       if (response.ok) {
-        localStorage.removeItem("refresh_token");
+        sessionStorage.removeItem("refresh_token");
         navigate("/");
       } else {
         console.error("Logout failed:", response.statusText);

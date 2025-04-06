@@ -10,7 +10,7 @@ type PipelineData = {
 };
 
 const refreshAccessToken = async (): Promise<string> => {
-  const refresh_token = localStorage.getItem("refreshToken");
+  const refresh_token = sessionStorage.getItem("refreshToken");
   if (!refresh_token) {
     throw new Error("No refresh token available");
   }
@@ -35,7 +35,7 @@ const refreshAccessToken = async (): Promise<string> => {
   console.log("Refreshed token successfully");
   const newAccessToken = data.access;
   console.log("New access token: ", newAccessToken);
-  localStorage.setItem("authToken", newAccessToken);
+  sessionStorage.setItem("authToken", newAccessToken);
   return newAccessToken;
 };
 

@@ -23,7 +23,7 @@ const PortfolioCompanies = () => {
   const [error, setError] = useState<string | null>(null);
 
   const refreshAccessToken = async () => {
-    const refresh_token = localStorage.getItem("refreshToken");
+    const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
       throw new Error("No refresh token available");
     }
@@ -48,7 +48,7 @@ const PortfolioCompanies = () => {
     console.log("Refreshed token successfully");
     const newAccessToken = data.access;
     console.log("New access token: ", newAccessToken);
-    localStorage.setItem("authToken", newAccessToken);
+    sessionStorage.setItem("authToken", newAccessToken);
     return newAccessToken;
   };
 
@@ -57,7 +57,7 @@ const PortfolioCompanies = () => {
       setLoading(true);
 
       const refreshAccessToken = async () => {
-        const refresh_token = localStorage.getItem("refreshToken");
+        const refresh_token = sessionStorage.getItem("refreshToken");
         if (!refresh_token) {
           throw new Error("No refresh token available");
         }
@@ -82,7 +82,7 @@ const PortfolioCompanies = () => {
         console.log("Refreshed token successfully");
         const newAccessToken = data.access;
         console.log("New access token: ", newAccessToken);
-        localStorage.setItem("authToken", newAccessToken);
+        sessionStorage.setItem("authToken", newAccessToken);
         return newAccessToken;
       };
 
@@ -129,7 +129,7 @@ const PortfolioCompanies = () => {
       };
 
       try {
-        const access_token = localStorage.getItem("authToken");
+        const access_token = sessionStorage.getItem("authToken");
         if (access_token) {
           await getApplications(access_token);
         } else {
@@ -236,7 +236,7 @@ const PortfolioCompanies = () => {
                 };
 
                 try {
-                  const token = localStorage.getItem("authToken");
+                  const token = sessionStorage.getItem("authToken");
                   if (!token) {
                     alert("No authentication token found. Please log in.");
                     return;

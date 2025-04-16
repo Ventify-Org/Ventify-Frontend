@@ -22,7 +22,7 @@ const Investments = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/vcfirms/investments/all"
+          "https://ventify-backend.up.railway.app/api/vcfirms/investments/all"
         );
         const data = await response.json();
         setInvestments(data);

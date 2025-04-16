@@ -18,7 +18,8 @@ const Investors = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to refresh access token
+  {
+    /*
   const refreshAccessToken = useCallback(async () => {
     const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
@@ -27,7 +28,7 @@ const Investors = () => {
     console.log("Refreshing token...");
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: {
@@ -45,22 +46,23 @@ const Investors = () => {
     sessionStorage.setItem("authToken", data.access);
     console.log("Token refreshed successfully");
     return data.access;
-  }, []);
+  }, []);*/
+  }
 
   // Function to get investor applications
-  const getInvestorApplications = useCallback(
-    async (token: string, retry: boolean = true) => {
-      const response = await fetch(
-        "https://ventify-backend.onrender.com/api/vcfirms/investor-applications/all/",
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
+  const getInvestorApplications = useCallback(async (token: string) => {
+    const response = await fetch(
+      "https://ventify-backend.up.railway.app/api/vcfirms/investor-applications/all/",
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      }
+    );
 
-      if (response.status === 401 && retry) {
-        console.log("Access token expired. Refreshing...");
+    {
+      /*if (response.status === 401 && retry) {
+        console.log("Access token expired. Refresh");
         try {
           const newToken = await refreshAccessToken();
           return getInvestorApplications(newToken, false);
@@ -68,31 +70,30 @@ const Investors = () => {
           console.error("Failed to refresh token:", err);
           throw new Error("Token refresh failed. Please log in again.");
         }
-      }
+      */
+    }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
 
-      const data = (await response.json()) as {
-        results?: { data?: InvestorApplication[] };
-      };
-      if (data.results && data.results.data) {
-        setInvestorApplications(data.results.data);
-      } else {
-        setInvestorApplications([]); // Ensure it's always an array
-      }
+    const data = (await response.json()) as {
+      results?: { data?: InvestorApplication[] };
+    };
+    if (data.results && data.results.data) {
+      setInvestorApplications(data.results.data);
+    } else {
+      setInvestorApplications([]); // Ensure it's always an array
+    }
 
-      setError(null);
-    },
-    [refreshAccessToken]
-  );
+    setError(null);
+  }, []);
 
   useEffect(() => {
     const fetchInvestorApplications = async () => {
       setLoading(true);
       try {
-        const access_token = sessionStorage.getItem("authToken");
+        const access_token = sessionStorage.getItem("access_token");
         if (access_token) {
           await getInvestorApplications(access_token);
         } else {
@@ -152,7 +153,7 @@ const Investors = () => {
               onClick: async (id: number) => {
                 const requestDocs = async (token: string) => {
                   const response = await fetch(
-                    `https://ventify-backend.onrender.com/api/vcfirms/investor-applications/${id}/request-docs/`,
+                    `https://ventify-backend.up.railway.app/api/vcfirms/investor-applications/${id}/request-docs/`,
                     {
                       method: "PATCH",
                       headers: {
@@ -173,14 +174,6 @@ const Investors = () => {
 
                     if (data.status === "pending") {
                       updateApplicationStatus(id, "pending");
-                    }
-                  } else if (response.status === 401) {
-                    console.log("Token expired, attempting to refresh...");
-                    const newToken = await refreshAccessToken();
-                    if (newToken) {
-                      return requestDocs(newToken);
-                    } else {
-                      alert("Failed to refresh token. Please log in again.");
                     }
                   } else {
                     const errorDetails = await response.json();

@@ -24,7 +24,7 @@ const AllRaised = () => {
     }
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: {
@@ -48,7 +48,7 @@ const AllRaised = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/startups/investments/list-all/",
+        "https://ventify-backend.up.railway.app/api/startups/investments/list-all/",
         {
           headers: {
             Authorization: `Token ${token}`,

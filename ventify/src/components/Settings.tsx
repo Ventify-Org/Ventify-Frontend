@@ -31,7 +31,7 @@ const Settings = () => {
         if (!token) throw new Error("No access token found");
 
         let response = await fetch(
-          "https://ventify-backend.onrender.com/api/users/me",
+          "https://ventify-backend.up.railway.app/api/users/me",
           {
             method: "GET",
             headers: {
@@ -49,7 +49,7 @@ const Settings = () => {
           if (!refresh_token) throw new Error("No refresh token available");
 
           const refreshResponse = await fetch(
-            "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+            "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
             {
               method: "POST",
               headers: {
@@ -78,7 +78,7 @@ const Settings = () => {
 
           // Retry with the new token
           response = await fetch(
-            "https://ventify-backend.onrender.com/api/users/me",
+            "https://ventify-backend.up.railway.app/api/users/me",
             {
               method: "GET",
               headers: {
@@ -136,7 +136,7 @@ const Settings = () => {
       if (!token) throw new Error("No access token found");
 
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/users/upload-profile-image/",
+        "https://ventify-backend.up.railway.app/api/users/upload-profile-image/",
         {
           method: "POST",
           headers: { Authorization: `Token ${token}` },
@@ -149,7 +149,7 @@ const Settings = () => {
 
       // Fetch updated user data
       const userResponse = await fetch(
-        "https://ventify-backend.onrender.com/api/users/me",
+        "https://ventify-backend.up.railway.app/api/users/me",
         {
           headers: { Authorization: `Token ${token}` },
         }
@@ -175,7 +175,7 @@ const Settings = () => {
       if (!token) throw new Error("No access token found");
 
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/users/remove-profile-image/",
+        "https://ventify-backend.up.railway.app/api/users/remove-profile-image/",
         {
           method: "DELETE",
           headers: { Authorization: `Token ${token}` },

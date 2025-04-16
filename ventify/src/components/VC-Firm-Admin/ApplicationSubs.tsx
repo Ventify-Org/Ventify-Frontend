@@ -64,7 +64,7 @@ const Subsection = ({
       }
 
       const response = await fetch(
-        `https://ventify-backend.onrender.com/api/vcfirms/investor-applications/${id}/fetch/`,
+        `https://ventify-backend.up.railway.app/api/vcfirms/investor-applications/${id}/fetch/`,
         {
           method: "GET",
           headers: {

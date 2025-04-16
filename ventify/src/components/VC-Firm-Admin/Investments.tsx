@@ -27,7 +27,7 @@ const Investments = () => {
     }
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: {
@@ -51,7 +51,7 @@ const Investments = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/vcfirms/investments/all",
+        "https://ventify-backend.up.railway.app/api/vcfirms/investments/all",
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -121,7 +121,7 @@ const Investments = () => {
 
         const token = await refreshAccessToken();
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/vcfirms/investments/create/",
+          "https://ventify-backend.up.railway.app/api/vcfirms/investments/create/",
           {
             method: "POST",
             headers: {

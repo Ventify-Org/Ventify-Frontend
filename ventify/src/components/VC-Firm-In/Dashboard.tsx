@@ -40,7 +40,7 @@ const DashboardFirmIN = () => {
         if (!token) throw new Error("No access token found");
 
         let response = await fetch(
-          "https://ventify-backend.onrender.com/api/users/me",
+          "https://ventify-backend.up.railway.app/api/users/me",
           {
             method: "GET",
             headers: {
@@ -58,7 +58,7 @@ const DashboardFirmIN = () => {
           if (!refresh_token) throw new Error("No refresh token available");
 
           const refreshResponse = await fetch(
-            "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+            "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
             {
               method: "POST",
               headers: {
@@ -87,7 +87,7 @@ const DashboardFirmIN = () => {
 
           // 🔄 Retry with the new token
           response = await fetch(
-            "https://ventify-backend.onrender.com/api/users/me",
+            "https://ventify-backend.up.railway.app/api/users/me",
             {
               method: "GET",
               headers: {
@@ -149,7 +149,7 @@ const DashboardFirmIN = () => {
 
     try {
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/auth/logout/",
+        "https://ventify-backend.up.railway.app/api/auth/logout/",
         {
           method: "POST",
           headers: {

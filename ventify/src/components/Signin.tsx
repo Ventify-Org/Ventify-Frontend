@@ -29,7 +29,7 @@ const Signin = () => {
 
     try {
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/auth/login/",
+        "https://ventify-backend.up.railway.app/api/auth/login/",
         {
           method: "POST",
           headers: {

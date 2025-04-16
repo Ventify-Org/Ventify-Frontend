@@ -37,7 +37,7 @@ const Applications = () => {
     console.log("Now to refresh the token");
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: {
@@ -70,7 +70,7 @@ const Applications = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/investors/applications/list-all/",
+        "https://ventify-backend.up.railway.app/api/investors/applications/list-all/",
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -102,7 +102,7 @@ const Applications = () => {
     try {
       const token = await refreshAccessToken(); // Get fresh access token
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/investors/applications/apply/",
+        "https://ventify-backend.up.railway.app/api/investors/applications/apply/",
         {
           method: "POST",
           headers: {

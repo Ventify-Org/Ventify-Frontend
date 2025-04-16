@@ -22,6 +22,8 @@ const PortfolioCompanies = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  {
+    /*
   const refreshAccessToken = async () => {
     const refresh_token = sessionStorage.getItem("refreshToken");
     if (!refresh_token) {
@@ -30,7 +32,7 @@ const PortfolioCompanies = () => {
     console.log("Now to refresh the token");
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: {
@@ -50,7 +52,8 @@ const PortfolioCompanies = () => {
     console.log("New access token: ", newAccessToken);
     sessionStorage.setItem("authToken", newAccessToken);
     return newAccessToken;
-  };
+  */
+  }
 
   useEffect(() => {
     const fetchPCApplications = async () => {
@@ -59,12 +62,12 @@ const PortfolioCompanies = () => {
       const refreshAccessToken = async () => {
         const refresh_token = sessionStorage.getItem("refreshToken");
         if (!refresh_token) {
-          throw new Error("No refresh token available");
+          console.log("No refresh token available");
         }
         console.log("Now to refresh the token");
 
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+          "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
           {
             method: "POST",
             headers: {
@@ -88,7 +91,7 @@ const PortfolioCompanies = () => {
 
       const getApplications = async (token: string, retry: boolean = true) => {
         const response: FetchResponse = await fetch(
-          "https://ventify-backend.onrender.com/api/vcfirms/investor-applications/all/",
+          "https://ventify-backend.up.railway.app/api/vcfirms/investor-applications/all/",
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -129,14 +132,14 @@ const PortfolioCompanies = () => {
       };
 
       try {
-        const access_token = sessionStorage.getItem("authToken");
+        const access_token = sessionStorage.getItem("access_token");
         if (access_token) {
           await getApplications(access_token);
         } else {
-          throw new Error("No access token available");
+          console.log("No access token available");
         }
       } catch (err) {
-        console.error("Error fetching applications:", err);
+        console.log("Error fetching applications:", err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -190,7 +193,7 @@ const PortfolioCompanies = () => {
               onClick: async (id: number) => {
                 const requestDocs = async (token: string) => {
                   const response = await fetch(
-                    `https://ventify-backend.onrender.com/api/vcfirms/investor-applications/${id}/request-docs/`,
+                    `https://ventify-backend.up.railway.app/api/vcfirms/investor-applications/${id}/request-docs/`,
                     {
                       method: "PATCH",
                       headers: {
@@ -214,12 +217,6 @@ const PortfolioCompanies = () => {
                     }
                   } else if (response.status === 401) {
                     console.log("Token expired, attempting to refresh...");
-                    const newToken = await refreshAccessToken();
-                    if (newToken) {
-                      return requestDocs(newToken);
-                    } else {
-                      alert("Failed to refresh token. Please log in again.");
-                    }
                   } else {
                     const errorDetails = await response.json();
                     console.error("Error Details:", errorDetails);

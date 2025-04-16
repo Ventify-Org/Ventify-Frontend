@@ -17,7 +17,7 @@ const refreshAccessToken = async (): Promise<string> => {
   console.log("Now to refresh the token");
 
   const response = await fetch(
-    "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+    "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
     {
       method: "POST",
       headers: {
@@ -49,7 +49,7 @@ const Pipeline = () => {
       try {
         const token = await refreshAccessToken();
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/pipeline/",
+          "https://ventify-backend.up.railway.app/api/pipeline/",
           {
             headers: {
               Authorization: `Bearer ${token}`,

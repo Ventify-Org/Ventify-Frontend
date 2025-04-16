@@ -10,7 +10,7 @@ const refreshAccessToken = async () => {
   console.log("Now to refresh the token");
 
   const response = await fetch(
-    "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+    "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
     {
       method: "POST",
       headers: {
@@ -59,7 +59,7 @@ const Messages = () => {
         try {
           const token = sessionStorage.getItem("authToken");
           const response = await fetch(
-            `https://ventify-backend.onrender.com/api/messages/get-messages?user=${selectedCompany.id}`,
+            `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${selectedCompany.id}`,
             {
               headers: {
                 Authorization: `Token ${token}`,
@@ -70,7 +70,7 @@ const Messages = () => {
           if (response.status === 401) {
             const newToken = await refreshAccessToken();
             const retryResponse = await fetch(
-              `https://ventify-backend.onrender.com/api/messages/get-messages?user=${selectedCompany.id}`,
+              `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${selectedCompany.id}`,
               {
                 headers: {
                   Authorization: `Token ${newToken}`,
@@ -109,7 +109,7 @@ const Messages = () => {
       try {
         const token = sessionStorage.getItem("authToken");
         const response = await fetch(
-          "https://ventify-backend.onrender.com/api/messages/send-message/",
+          "https://ventify-backend.up.railway.app/api/messages/send-message/",
           {
             method: "POST",
             headers: {
@@ -124,7 +124,7 @@ const Messages = () => {
           // Token expired, refresh and retry
           const newToken = await refreshAccessToken();
           const retryResponse = await fetch(
-            "https://ventify-backend.onrender.com/api/messages/send-message/",
+            "https://ventify-backend.up.railway.app/api/messages/send-message/",
             {
               method: "POST",
               headers: {

@@ -27,7 +27,7 @@ const Invites = () => {
     }
 
     const response = await fetch(
-      "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+      "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +49,7 @@ const Invites = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/users/invitations/all/",
+        "https://ventify-backend.up.railway.app/api/users/invitations/all/",
         {
           method: "GET",
           headers: {
@@ -127,7 +127,7 @@ const Invites = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/users/invitations/create/",
+        "https://ventify-backend.up.railway.app/api/users/invitations/create/",
         {
           method: "POST",
           headers: {
@@ -158,7 +158,7 @@ const Invites = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        `https://ventify-backend.onrender.com/api/users/invitations/${id}/revoke`,
+        `https://ventify-backend.up.railway.app/api/users/invitations/${id}/revoke`,
         {
           method: "POST",
           headers: {
@@ -187,7 +187,7 @@ const Invites = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        `https://ventify-backend.onrender.com/api/users/invitations/${id}/accept`,
+        `https://ventify-backend.up.railway.app/api/users/invitations/${id}/accept`,
         {
           method: "POST",
           headers: {
@@ -215,7 +215,7 @@ const Invites = () => {
     try {
       const token = await refreshAccessToken();
       const response = await fetch(
-        `https://ventify-backend.onrender.com/api/users/invitations/${id}/decline`,
+        `https://ventify-backend.up.railway.app/api/users/invitations/${id}/decline`,
         {
           method: "POST",
           headers: {

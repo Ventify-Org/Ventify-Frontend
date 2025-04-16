@@ -24,10 +24,11 @@ const DashboardFirmAdmin = () => {
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState<UserData | null>(null);
-  //const [loggedIn, setLoggedIn] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(error);
+  if (error) {
+    console.log(error);
+  }
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,
@@ -46,6 +47,12 @@ const DashboardFirmAdmin = () => {
     Invites: <Invites />,
   };
 
+  const token = sessionStorage.getItem("access_token");
+  if (!token) {
+    console.log("No access token found");
+  }
+  console.log("Access token:", token);
+
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
@@ -53,10 +60,12 @@ const DashboardFirmAdmin = () => {
 
       try {
         let token = sessionStorage.getItem("access_token");
-        if (!token) throw new Error("No access token found");
+        if (!token) {
+          console.log("No access token found");
+        }
 
         let response = await fetch(
-          "https://ventify-backend.onrender.com/api/users/me",
+          "https://ventify-backend.up.railway.app/api/users/me",
           {
             method: "GET",
             headers: {
@@ -73,7 +82,7 @@ const DashboardFirmAdmin = () => {
           if (!refresh_token) throw new Error("No refresh token available");
 
           const refreshResponse = await fetch(
-            "https://ventify-backend.onrender.com/api/auth/token/refresh/",
+            "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
             {
               method: "POST",
               headers: {
@@ -102,7 +111,7 @@ const DashboardFirmAdmin = () => {
 
           // 🔄 Retry with the new token
           response = await fetch(
-            "https://ventify-backend.onrender.com/api/users/me",
+            "https://ventify-backend.up.railway.app/api/users/me",
             {
               method: "GET",
               headers: {
@@ -143,7 +152,7 @@ const DashboardFirmAdmin = () => {
     };
 
     fetchUserData();
-  }, []); // ✅ No dependency on refreshAccessToken needed
+  }, []);
 
   if (loading) {
     return (
@@ -164,7 +173,7 @@ const DashboardFirmAdmin = () => {
 
     try {
       const response = await fetch(
-        "https://ventify-backend.onrender.com/api/auth/logout/",
+        "https://ventify-backend.up.railway.app/api/auth/logout/",
         {
           method: "POST",
           headers: {
@@ -216,7 +225,11 @@ const DashboardFirmAdmin = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <p>{userData?.name || ""}</p>
+          <p>
+            {userData?.name
+              ? userData.name.charAt(0).toUpperCase() + userData.name.slice(1)
+              : ""}
+          </p>
           <p>{userData?.email || ""}</p>
 
           {/* Navigation */}

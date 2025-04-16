@@ -126,7 +126,7 @@ const Signup = () => {
 
   // Automatic login function after successful signup
   const autoLogin = async (email: string, password: string) => {
-    const loginUrl = "https://ventify-backend.onrender.com/api/auth/login/";
+    const loginUrl = "https://ventify-backend.up.railway.app/api/auth/login/";
     try {
       const loginResponse = await fetch(loginUrl, {
         method: "POST",
@@ -170,7 +170,7 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const url = "https://ventify-backend.onrender.com/api/auth/signup/";
+    const url = "https://ventify-backend.up.railway.app/api/auth/signup/";
     const options = {
       method: "POST",
       headers: {

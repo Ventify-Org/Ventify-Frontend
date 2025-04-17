@@ -1,35 +1,24 @@
 import { useState, useEffect } from "react";
-import { BiArrowFromRight, BiMicrophone, BiSend } from "react-icons/bi";
+import { BiArrowFromRight, BiMicrophone, BiSend, BiPlus } from "react-icons/bi";
 
-// Refresh access token
 const refreshAccessToken = async () => {
   const refresh_token = sessionStorage.getItem("refreshToken");
-  if (!refresh_token) {
-    throw new Error("No refresh token available");
-  }
-  console.log("Now to refresh the token");
+  if (!refresh_token) throw new Error("No refresh token available");
 
   const response = await fetch(
     "https://ventify-backend.up.railway.app/api/auth/token/refresh/",
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refresh_token }),
     }
   );
 
-  if (!response.ok) {
-    throw new Error("Failed to refresh token");
-  }
+  if (!response.ok) throw new Error("Failed to refresh token");
 
   const data: { access: string } = await response.json();
-  console.log("Refreshed token successfully");
-  const newAccessToken = data.access;
-  console.log("New access token: ", newAccessToken);
-  sessionStorage.setItem("authToken", newAccessToken);
-  return newAccessToken;
+  sessionStorage.setItem("authToken", data.access);
+  return data.access;
 };
 
 const Messages = () => {
@@ -39,130 +28,147 @@ const Messages = () => {
     id: number;
     name: string;
   } | null>(null);
+
+  const [vcFirms, setVcFirms] = useState<{ id: number; name: string }[]>([]);
   const [messages, setMessages] = useState<
     { message: string; sender: string }[]
   >([]);
   const [newMessage, setNewMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState<
+    { id: number; name: string }[]
+  >([]);
 
-  // Sample Companies with IDs
-  const companies = [{ id: 1, name: "Company A" }];
-
-  // Fetch messages when a company is selected
+  // Fetch messages for selected company
   useEffect(() => {
     const fetchMessages = async () => {
-      if (selectedCompany) {
-        try {
-          const token = sessionStorage.getItem("authToken");
-          const response = await fetch(
+      if (!selectedCompany) return;
+
+      try {
+        const token = sessionStorage.getItem("authToken");
+        const response = await fetch(
+          `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${selectedCompany.id}`,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 401) {
+          const newToken = await refreshAccessToken();
+          const retryResponse = await fetch(
             `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${selectedCompany.id}`,
             {
               headers: {
-                Authorization: `Token ${token}`,
+                Authorization: `Token ${newToken}`,
               },
             }
           );
 
-          if (response.status === 401) {
-            const newToken = await refreshAccessToken();
-            const retryResponse = await fetch(
-              `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${selectedCompany.id}`,
-              {
-                headers: {
-                  Authorization: `Token ${newToken}`,
-                },
-              }
-            );
-            if (retryResponse.ok) {
-              const data = await retryResponse.json();
-              setMessages(data.messages);
-            }
-          } else if (response.ok) {
-            const data = await response.json();
-            setMessages(data.results?.data || []);
-
-            console.log("Fetched messages:", data.messages);
-          } else {
-            console.error("Failed to fetch messages:", response.status);
+          if (retryResponse.ok) {
+            const data = await retryResponse.json();
+            setMessages(data.messages || []);
           }
-        } catch (error) {
-          console.error("Failed to fetch messages:", error);
+        } else if (response.ok) {
+          const data = await response.json();
+          setMessages(data.results?.data || []);
         }
+      } catch (err) {
+        console.error("Error fetching messages:", err);
       }
     };
 
     fetchMessages();
   }, [selectedCompany]);
 
-  // Send a new message
-  const handleSendMessage = async () => {
-    if (newMessage.trim() !== "" && selectedCompany) {
-      const messageData = {
-        message: newMessage,
-        receiver: selectedCompany.id, // Using receiver as per the docs
-      };
+  // Fetch VC Firms
+  const fetchVCFirms = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const response = await fetch(
+        "https://ventify-backend.up.railway.app/api/vc-firms/list-all",
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+      const responseData = await response.json();
+      setVcFirms(responseData.data || []);
+    } catch (err) {
+      console.error("Failed to load VC firms:", err);
+    }
+  };
 
-      try {
-        const token = sessionStorage.getItem("authToken");
-        const response = await fetch(
+  // Send message
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedCompany) return;
+
+    const messageData = {
+      message: newMessage,
+      receiver: selectedCompany.id,
+    };
+
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const response = await fetch(
+        "https://ventify-backend.up.railway.app/api/messages/send-message/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify(messageData),
+        }
+      );
+
+      if (response.status === 401) {
+        const newToken = await refreshAccessToken();
+        const retryResponse = await fetch(
           "https://ventify-backend.up.railway.app/api/messages/send-message/",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
+              Authorization: `Token ${newToken}`,
             },
             body: JSON.stringify(messageData),
           }
         );
 
-        if (response.status === 401) {
-          // Token expired, refresh and retry
-          const newToken = await refreshAccessToken();
-          const retryResponse = await fetch(
-            "https://ventify-backend.up.railway.app/api/messages/send-message/",
+        if (retryResponse.ok) {
+          const data = await retryResponse.json();
+          setMessages((prev) => [
+            ...prev,
             {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Token ${newToken}`,
-              },
-              body: JSON.stringify(messageData),
-            }
-          );
-
-          if (retryResponse.ok) {
-            const data = await retryResponse.json();
-
-            setMessages([
-              ...messages,
-              {
-                message: data.message,
-                sender: data.sender.toString(), // Ensure it's a string to match your checks
-              },
-            ]);
-            setNewMessage(""); // Clear input
-          } else {
-            console.error("Failed to send message on retry");
-          }
-        } else if (response.ok) {
-          const data = await response.json();
-          setMessages([...messages, data]);
-          setNewMessage(""); // Clear input
-        } else {
-          console.error("Failed to send message");
+              message: data.message,
+              sender: data.sender.toString(),
+            },
+          ]);
+          setNewMessage("");
         }
-      } catch (error) {
-        console.error("Error sending message:", error);
+      } else if (response.ok) {
+        const data = await response.json();
+        setMessages((prev) => [...prev, data]);
+        setNewMessage("");
       }
+    } catch (err) {
+      console.error("Send message error:", err);
+    }
+
+    // Add to history if not already present
+    if (!chatHistory.find((c) => c.id === selectedCompany.id)) {
+      setChatHistory((prev) => [...prev, selectedCompany]);
     }
   };
 
   return (
-    <div className="flex flex-col w-full h-screen">
+    <div className="flex flex-col w-full  relative">
       {selectedCompany ? (
         // Chat Interface
         <div className="flex flex-col h-full">
-          <div className="flex justify-between px-6 py-3 border-b-[1.5px] items-center">
+          <div className="flex justify-between px-6 py-3 border-b items-center">
             <div className="flex gap-5 items-center">
               <BiArrowFromRight
                 size={18}
@@ -175,22 +181,20 @@ const Messages = () => {
             <BiMicrophone size={18} />
           </div>
 
-          <div id="msg" className="flex flex-col flex-grow p-4 overflow-y-auto">
-            {messages?.length > 0 ? (
-              [...messages].reverse().map((msg, index) => {
-                return (
-                  <div
-                    key={index}
-                    className={`max-w-[70%] px-4 py-2 my-1 rounded-lg ${
-                      msg.sender?.toString() === yourIdentifier.toString()
-                        ? "bg-blue-500 text-white self-end"
-                        : "bg-gray-200 text-black self-start"
-                    }`}
-                  >
-                    {msg.message}
-                  </div>
-                );
-              })
+          <div className="flex flex-col flex-grow p-4 overflow-y-auto">
+            {messages.length > 0 ? (
+              [...messages].reverse().map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`max-w-[70%] px-4 py-2 my-1 rounded-lg ${
+                    msg.sender?.toString() === yourIdentifier.toString()
+                      ? "bg-blue-500 text-white self-end"
+                      : "bg-gray-200 text-black self-start"
+                  }`}
+                >
+                  {msg.message}
+                </div>
+              ))
             ) : (
               <p className="text-center text-gray-500">No messages yet.</p>
             )}
@@ -200,7 +204,7 @@ const Messages = () => {
             <div className="relative w-full">
               <input
                 type="text"
-                className="w-full border-[1.5px] outline-0 rounded-sm px-3 py-2 pr-10"
+                className="w-full border outline-0 rounded-sm px-3 py-2 pr-10"
                 placeholder="Type a message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -213,21 +217,55 @@ const Messages = () => {
           </div>
         </div>
       ) : (
-        // Company List
-        <div>
-          <h1 className="text-3xl font-bold">Messages</h1>
-          <div className="flex flex-col justify-center items-center h-full">
-            {companies.map((company) => (
-              <div
-                key={company.id}
-                className="shadow-lg flex py-3 gap-8 text-xl  items-center w-[70%] px-10 cursor-pointer"
-                onClick={() => setSelectedCompany(company)}
-              >
-                <div className="bg-red-500 w-15 h-15 rounded-full"></div>
-                <p>{company.name}</p>
-              </div>
-            ))}
-          </div>
+        // Main view: Chat history or VC selection
+        <div className="p-6">
+          <h1 className="text-2xl font-semibold mb-4">Your Conversations</h1>
+          {chatHistory.length === 0 ? (
+            <p className="text-gray-500 text-center mt-10">
+              No conversations yet. Tap + to start one.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {chatHistory.map((company) => (
+                <div
+                  key={company.id}
+                  onClick={() => setSelectedCompany(company)}
+                  className="p-4 shadow rounded cursor-pointer hover:bg-gray-100"
+                >
+                  <p className="text-lg font-medium">{company.name}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* FAB: Floating Action Button */}
+      {!selectedCompany && (
+        <button
+          onClick={fetchVCFirms}
+          className="absolute bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg"
+        >
+          <BiPlus size={24} />
+        </button>
+      )}
+
+      {/* VC Firm selection modal-ish list */}
+      {!selectedCompany && vcFirms.length > 0 && (
+        <div className="absolute inset-0 bg-white p-6 z-10 overflow-y-auto">
+          <h2 className="text-xl font-semibold mb-4">Choose a VC Firm</h2>
+          {vcFirms.map((firm) => (
+            <div
+              key={firm.id}
+              onClick={() => {
+                setSelectedCompany(firm);
+                setVcFirms([]); // clear after selecting
+              }}
+              className="p-4 border-b cursor-pointer hover:bg-gray-100"
+            >
+              {firm.name}
+            </div>
+          ))}
         </div>
       )}
     </div>

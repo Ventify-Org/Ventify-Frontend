@@ -14,7 +14,9 @@ const Invites = () => {
   const [sentInvites, setSentInvites] = useState<Invite[]>([]);
   const [receivedInvites, setReceivedInvites] = useState<Invite[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [inviteName, setInviteName] = useState("");
   const [newInviteEmail, setNewInviteEmail] = useState("");
+  const [note, setNote] = useState("");
   const [receipientType, setReceipientType] = useState("portfolio");
   const [expiresAt, setExpiresAt] = useState("");
   const [activeMainSection, setActiveMainSection] =
@@ -61,27 +63,16 @@ const Invites = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched invites data:", data);
+        console.log("Fetched invites data:", data.data);
 
-        setSentInvites(data.sent_invites?.data || []);
+        setSentInvites(data.sent_invites?.data || "merrr");
 
         // Ensure receivedInvites always has at least one item
         if (data.received_invites?.data?.length > 0) {
           setReceivedInvites(data.received_invites.data);
         } else {
           // Add demo invite if none exist
-          setReceivedInvites([
-            {
-              id: 999,
-              email: "demo@example.com",
-              receipient_type: "portfolio",
-              created_at: new Date().toISOString(),
-              expires_at: new Date(
-                Date.now() + 7 * 24 * 60 * 60 * 1000
-              ).toISOString(),
-              status: "pending",
-            },
-          ]);
+          setReceivedInvites([]);
         }
       } else {
         console.error("Failed to fetch invites:", response.statusText);
@@ -122,6 +113,7 @@ const Invites = () => {
       email: newInviteEmail,
       receipient_type: receipientType,
       expires_at: expiresAt,
+      note,
     };
 
     try {
@@ -415,8 +407,8 @@ const Invites = () => {
             <form onSubmit={generateInvite}>
               <input
                 type="text"
-                value={newInviteEmail}
-                onChange={(e) => setNewInviteEmail(e.target.value)}
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
                 placeholder="Name/Business Name"
                 required
                 className="w-full p-2 border rounded mb-4"
@@ -451,10 +443,11 @@ const Invites = () => {
               />
 
               <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
                 placeholder="Add message"
                 className="w-full p-2 border rounded mb-4 resize-none placeholder:italic"
                 rows={4}
-                cols={50}
               ></textarea>
 
               <div className="flex justify-end space-x-4">

@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from "react";
 const Investments = () => {
   interface Investment {
     id: number;
-    startup: string;
+    investor: string;
     round: string;
     amount: number;
     investment_type: string;
@@ -84,7 +84,7 @@ const Investments = () => {
   const handleAddClick = () => {
     const newRow: Investment = {
       id: investments.length + 1,
-      startup: "",
+      investor: "",
       round: "",
       amount: 0,
       investment_type: "",
@@ -227,7 +227,7 @@ const Investments = () => {
           {investments.map((item) => (
             <tr key={item.id} className="text-center">
               <td className="border bg-[#88A8DC] border-gray-300 p-2">
-                {item.startup}
+                {item.investor}
               </td>
               <td className="border bg-[#88A8DC] border-gray-300 p-2">
                 {item.round}
@@ -263,8 +263,8 @@ const Investments = () => {
               <td className="border p-2">
                 <input
                   type="text"
-                  value={newInvestment.startup}
-                  onChange={(e) => handleInputChange(e, "startup")}
+                  value={newInvestment.investor}
+                  onChange={(e) => handleInputChange(e, "investor")}
                   disabled={isSaved}
                   className="w-full border rounded p-1"
                   required

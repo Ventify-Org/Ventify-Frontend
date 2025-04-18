@@ -21,7 +21,9 @@ const DashboardInvestor = () => {
   //const [loggedIn, setLoggedIn] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(error);
+  if (error) {
+    console.log(error);
+  }
 
   const sections: Record<string, JSX.Element> = {
     Dashboard: <DashboardMenu />,

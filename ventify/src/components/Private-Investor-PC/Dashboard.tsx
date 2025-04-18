@@ -220,6 +220,14 @@ const DashboardInvestorPC = () => {
             </nav>
 
             <div className="mt-auto w-full p-4">
+            <button
+              onClick={() => {
+                navigate("/dashboard/private-investor/admin");
+              }}
+              className="bg-blue-600 rounded-sm px-4 py-2 hover:cursor-pointer"
+            >
+              Switch Back
+            </button>
               <button
                 onClick={logOut}
                 className="flex gap-2 items-center justify-center w-full mb-5 hover:bg-yellow-400 hover:text-[#00378B] py-2 px-4 rounded-md"

@@ -28,7 +28,7 @@ const refreshAccessToken = async () => {
 };
 
 const Messages = () => {
-  const yourIdentifier = 2;
+  const yourIdentifier = 25;
 
   const [selectedCompany, setSelectedCompany] = useState<{
     id: number;
@@ -44,67 +44,6 @@ const Messages = () => {
     { id: number; name: string }[]
   >([]);
 
-  // Load initial messages and populate chat history
-  useEffect(() => {
-    const loadInitialMessages = async () => {
-      try {
-        const token = sessionStorage.getItem("authToken");
-
-        const response = await fetch(
-          `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${yourIdentifier}`,
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-
-        if (response.status === 401) {
-          const newToken = await refreshAccessToken();
-          return await fetchInitialMessages(newToken);
-        }
-
-        const data = await response.json();
-        const messages = data.results.data;
-
-        const partnersMap = new Map<number, string>();
-        messages.forEach(
-          (msg: { sender: number; receiver: number; message: string }) => {
-            const isSender = msg.sender === yourIdentifier;
-            const partnerId = isSender ? msg.receiver : msg.sender;
-            if (!partnersMap.has(partnerId)) {
-              partnersMap.set(partnerId, `User ${partnerId}`); // Placeholder name
-            }
-          }
-        );
-
-        const history = Array.from(partnersMap.entries()).map(([id, name]) => ({
-          id,
-          name,
-        }));
-
-        setChatHistory(history);
-      } catch (err) {
-        console.error("Error loading initial messages:", err);
-      }
-    };
-
-    const fetchInitialMessages = async (token: string) => {
-      const response = await fetch(
-        `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${yourIdentifier}`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      return data;
-    };
-
-    loadInitialMessages();
-  }, []);
-
   // Fetch messages for selected company
   useEffect(() => {
     const fetchMessages = async () => {
@@ -113,7 +52,7 @@ const Messages = () => {
       try {
         const token = sessionStorage.getItem("authToken");
         const response = await fetch(
-          `https://ventify-backend.up.railway.app/api/messages/get-messages?user=${yourIdentifier}`,
+          `https://ventify-backend.up.railway.app/api/messages/get-messages?user=2`,
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -123,29 +62,25 @@ const Messages = () => {
 
         if (response.status === 401) {
           const newToken = await refreshAccessToken();
-          console.log(newToken);
-          return await fetchMessages(); // Retry
+          const retryResponse = await fetch(
+            `https://ventify-backend.up.railway.app/api/messages/get-messages?user=2}`,
+            {
+              headers: {
+                Authorization: `Token ${newToken}`,
+              },
+            }
+          );
+
+          if (retryResponse.ok) {
+            const data = await retryResponse.json();
+            //setMessages(data.messages || []);
+            console.log(data);
+          }
+        } else if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          //setMessages(data.results?.data || []);
         }
-
-        const data = await response.json();
-        const allMessages = data.results.data;
-
-        const filteredMessages = allMessages.filter(
-          (msg: { sender: number; receiver: number; message: string }) =>
-            (msg.sender === yourIdentifier &&
-              msg.receiver === selectedCompany.id) ||
-            (msg.sender === selectedCompany.id &&
-              msg.receiver === yourIdentifier)
-        );
-
-        const formatted = filteredMessages.map(
-          (m: { sender: number; message: string }) => ({
-            message: m.message,
-            sender: m.sender.toString(),
-          })
-        );
-
-        setMessages(formatted);
       } catch (err) {
         console.error("Error fetching messages:", err);
       }
@@ -219,16 +154,16 @@ const Messages = () => {
           const data = await retryResponse.json();
           setMessages((prev) => [
             ...prev,
-            { message: data.message, sender: data.sender.toString() },
+            {
+              message: data.message,
+              sender: data.sender.toString(),
+            },
           ]);
           setNewMessage("");
         }
       } else if (response.ok) {
         const data = await response.json();
-        setMessages((prev) => [
-          ...prev,
-          { message: data.message, sender: data.sender.toString() },
-        ]);
+        setMessages((prev) => [...prev, data]);
         setNewMessage("");
       }
     } catch (err) {
@@ -265,7 +200,7 @@ const Messages = () => {
                 <div
                   key={idx}
                   className={`max-w-[70%] px-4 py-2 my-1 rounded-lg ${
-                    msg.sender === yourIdentifier.toString()
+                    msg.sender?.toString() === yourIdentifier.toString()
                       ? "bg-blue-500 text-white self-end"
                       : "bg-gray-200 text-black self-start"
                   }`}
@@ -295,7 +230,7 @@ const Messages = () => {
           </div>
         </div>
       ) : (
-        // Chat history or empty screen
+        // Main view: Chat history or VC selection
         <div className="p-6">
           <h1 className="text-2xl font-semibold mb-4">Your Conversations</h1>
           {chatHistory.length === 0 ? (
@@ -318,7 +253,7 @@ const Messages = () => {
         </div>
       )}
 
-      {/* FAB Button */}
+      {/* FAB: Floating Action Button */}
       {!selectedCompany && (
         <button
           onClick={fetchVCFirms}
@@ -328,7 +263,7 @@ const Messages = () => {
         </button>
       )}
 
-      {/* VC Firm selection */}
+      {/* VC Firm selection modal-ish list */}
       {!selectedCompany && vcFirms.length > 0 && (
         <div className="absolute inset-0 flex items-center justify-center z-30 bg-white/70 mt-55 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-[90%] max-w-md max-h-[80vh] border-[1px] overflow-y-auto p-6">

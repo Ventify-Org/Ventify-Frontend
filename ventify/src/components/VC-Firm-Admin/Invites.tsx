@@ -88,18 +88,7 @@ const Invites = () => {
     // If no received invites, add a demo invite
     setReceivedInvites((prev) => {
       if (prev.length === 0) {
-        return [
-          {
-            id: 999, // Demo ID
-            email: "demo@example.com",
-            receipient_type: "portfolio",
-            created_at: new Date().toISOString(),
-            expires_at: new Date(
-              Date.now() + 7 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            status: "pending",
-          },
-        ];
+        return [];
       }
       return prev;
     });
